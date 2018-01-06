@@ -70,8 +70,8 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.draw(Constant.maze, 0, 0);
-		batch.draw(Constant.title, 50, 550);
-		batch.draw(Constant.icon, 480, 595);
+		batch.draw(Constant.title, 0, 400);
+		batch.draw(Constant.icon, 420, 450);
 
 		PacMan pacman = PacMan.getIstance(1, 1, world);
 		for (Coin coin : world.getCoins())

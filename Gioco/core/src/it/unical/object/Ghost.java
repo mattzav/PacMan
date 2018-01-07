@@ -178,20 +178,17 @@ public class Ghost {
 			}
 		}
 		if (next_position.size() == 0 && direction.x == 0 && direction.y == 0) {
-				System.out.println("Natro");
 				ArrayList<Position> pathposition = new ArrayList<Position>();
 				Position pacman_position = new Position(pacman.getLogic_x(), pacman.getLogic_y());
 				Position ghost_position = new Position(logic_x, logic_y);
-				System.out.println("chiedo percorso");
+				pathposition.add(ghost_position);
 				FindPath.getInstance().printPath(ghost_position, pacman_position, pathposition,
 						FindPath.getInstance().distanza(ghost_position, pacman_position));
-				System.out.println("ottenuto");
-				for (int i = 0; i < 3 + colour && i < pathposition.size(); i++)
+				for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
 					next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
 			
 		}
 		while (!next_position.isEmpty() && direction.x == 0 && direction.y == 0) {
-			System.out.println("Nntro");
 			Vector2 next = next_position.remove(0);
 			direction.x = next.x - logic_x;
 			direction.y = next.y - logic_y;

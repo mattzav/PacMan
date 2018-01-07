@@ -29,5 +29,9 @@ public class Position {
 		return this.x==objw.x && this.y==objw.y;
 	}
 
+	@Override
+	public String toString() {
+		return x+" "+y;
+	}
 	
 }

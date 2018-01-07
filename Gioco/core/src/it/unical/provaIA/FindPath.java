@@ -28,26 +28,10 @@ public class FindPath {
 	private FindPath(int [][] is_crossable) {
 		this.is_crossable=is_crossable;
 	}
-	
-	public static void main(String[] args) {
-		FindPath f = new FindPath();
-		long start = System.currentTimeMillis();
-		ArrayList<Position> punti = new ArrayList<Position>();
-		punti.add(new Position(3, 1));
-		if (f.printPath(new Position(3, 1), new Position(3, 10), punti,
-				f.distanza(new Position(3, 1), new Position(3, 10)))) {
-			for (Position p : punti)
-				System.out.println(p.getX() + " " + p.getY());
-		} else
-			System.out.println("niente");
-
-		System.out.println(System.currentTimeMillis() - start);
-	}
-
-		
 
 	public boolean printPath(Position start, Position end, ArrayList<Position> path, int start_distance) {
-
+	
+		
 		int greedy[] = new int[4];
 		String dir_greedy[] = { "destra", "sopra", "sinistra", "sotto" };
 		
@@ -82,13 +66,22 @@ public class FindPath {
 				}
 
 		}
-
+	
 		for (int i = 0; i < 4; i++) {
+			if(start.getX() == 15 && start.getY()==4)
+				System.out.println(dir_greedy[i]);
+		}
+		
+		for (int i = 0; i < 4; i++) {
+			
 			// destra
 			if (dir_greedy[i] == "destra") {
+				if(start.getX() == 15 && start.getY()==4)
+					System.out.println("dovrei andare a destra");
 				if (is_crossable[start.getX()][start.getY() + 1] != -1
 						&& distanza(new Position(start.getX(), start.getY() + 1), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX(), start.getY() + 1))) {
+					System.out.println("vado a destra");
 
 					path.add(new Position(start.getX(), start.getY() + 1));
 					
@@ -100,18 +93,19 @@ public class FindPath {
 					
 					path.remove(path.size() - 1);
 					
-					return false;
 
 				}
 
 			}
 			// sinistra
 			else if (dir_greedy[i] == "sinistra") {
-
+				if(start.getX() == 15 && start.getY()==4)
+					System.out.println("dovrei andare a sinistra");
 				if (is_crossable[start.getX()][start.getY() - 1] != -1
 						&& distanza(new Position(start.getX(), start.getY() - 1), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX(), start.getY() - 1))) {
-					
+					System.out.println("vado a sinistra");
+
 					path.add(new Position(start.getX(), start.getY() - 1));
 					
 					if (start.getX() == end.getX() && start.getY() - 1 == end.getY())
@@ -122,18 +116,20 @@ public class FindPath {
 					
 					path.remove(path.size() - 1);
 					
-					return false;
 
 				}
 
 			}
 			// sopra
 			else if (dir_greedy[i] == "sopra") {
+				if(start.getX() == 15 && start.getY()==4)
+					System.out.println("dovrei andare a sopra");
 
 				if (is_crossable[start.getX() - 1][start.getY()] != -1
 						&& distanza(new Position(start.getX() - 1, start.getY()), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX() - 1, start.getY()))) {
-					
+					System.out.println("vado sopra");
+
 					path.add(new Position(start.getX() - 1, start.getY()));
 					
 					if (start.getX() - 1 == end.getX() && start.getY() == end.getY())
@@ -144,16 +140,19 @@ public class FindPath {
 					
 					path.remove(path.size() - 1);
 					
-					return false;
 
 				}
 			}
 
 			// sotto
 			else {
+				if(start.getX() == 15 && start.getY()==4)
+					System.out.println("dovrei andare a sotto");
+
 				if (is_crossable[start.getX() + 1][start.getY()] != -1
 						&& distanza(new Position(start.getX() + 1, start.getY()), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX() + 1, start.getY()))) {
+					System.out.println("vado sotto");
 
 					path.add(new Position(start.getX() + 1, start.getY()));
 					
@@ -165,7 +164,6 @@ public class FindPath {
 					
 					path.remove(path.size() - 1);
 					
-					return false;
 
 				}
 			}
@@ -177,4 +175,174 @@ public class FindPath {
 		int distanza = (int) (Math.abs(v.getX() - vector2.getX()) + Math.abs(v.getY() - vector2.getY()));
 		return distanza;
 	}
+	
+	public static void main(String[] args) {
+		int [][] is_crossable=new int[21][19];
+		for(int i = 0 ;i<21;i++)
+			for(int j=0;j<19;j++)
+				is_crossable[i][j]=0;
+		for(int i=0;i<19;i++) {
+			is_crossable[0][i]=-1;
+			is_crossable[20][i]=-1;
+		}
+		for(int i=0;i<21;i++){
+			is_crossable[i][0]=-1;
+			is_crossable[i][18]=-1;
+		}
+		is_crossable[2][2]=-1;
+		is_crossable[2][3]=-1;
+		is_crossable[2][5]=-1;
+		is_crossable[2][6]=-1;
+		is_crossable[2][7]=-1;
+		is_crossable[1][9]=-1;
+		is_crossable[2][9]=-1;
+		is_crossable[2][11]=-1;
+		is_crossable[2][12]=-1;
+		is_crossable[2][13]=-1;
+		is_crossable[2][15]=-1;	
+		is_crossable[2][16]=-1;
+		
+		is_crossable[4][2]=-1;
+		is_crossable[4][3]=-1;
+		is_crossable[4][5]=-1;
+		is_crossable[4][7]=-1;
+		is_crossable[4][8]=-1;
+		is_crossable[4][9]=-1;
+		is_crossable[4][11]=-1;
+		is_crossable[4][10]=-1;
+		is_crossable[4][13]=-1;
+		
+		is_crossable[4][15]=-1;	
+		is_crossable[4][16]=-1;
+	
+		is_crossable[5][5]=-1;
+		is_crossable[5][9]=-1;
+		is_crossable[5][13]=-1;
+		
+		is_crossable[6][1]=-1;
+		is_crossable[6][2]=-1;
+		is_crossable[6][3]=-1;
+		is_crossable[6][5]=-1;
+		is_crossable[6][6]=-1;
+		is_crossable[6][7]=-1;
+		is_crossable[6][9]=-1;
+		is_crossable[6][11]=-1;	
+		is_crossable[6][12]=-1;
+		is_crossable[6][13]=-1;
+		is_crossable[6][15]=-1;	
+		is_crossable[6][16]=-1;
+		is_crossable[6][17]=-1;	
+		
+
+		is_crossable[7][3]=-1;
+		is_crossable[7][5]=-1;
+		is_crossable[7][13]=-1;
+		is_crossable[7][15]=-1;	
+	
+
+		is_crossable[8][1]=-1;
+		is_crossable[8][2]=-1;
+		is_crossable[8][3]=-1;
+		is_crossable[8][5]=-1;
+		is_crossable[8][7]=-1;
+		is_crossable[8][8]=-1;
+		is_crossable[8][10]=-1;
+		is_crossable[8][11]=-1;
+		is_crossable[8][13]=-1;	
+		is_crossable[8][15]=-1;
+		is_crossable[8][16]=-1;
+		is_crossable[8][17]=-1;	
+	
+
+		is_crossable[9][7]=-1;
+		is_crossable[9][11]=-1;	
+
+		is_crossable[10][1]=-1;
+		is_crossable[10][2]=-1;
+		is_crossable[10][3]=-1;
+		is_crossable[10][5]=-1;
+		is_crossable[10][7]=-1;
+		is_crossable[10][8]=-1;
+		is_crossable[10][9]=-1;
+		is_crossable[10][10]=-1;
+		is_crossable[10][11]=-1;
+		is_crossable[10][13]=-1;	
+		is_crossable[10][15]=-1;
+		is_crossable[10][16]=-1;
+		is_crossable[10][17]=-1;	
+		
+		is_crossable[11][3]=-1;
+		is_crossable[11][5]=-1;
+		is_crossable[11][13]=-1;
+		is_crossable[11][15]=-1;
+		
+		is_crossable[12][1]=-1;
+		is_crossable[12][2]=-1;
+		is_crossable[12][3]=-1;
+		is_crossable[12][5]=-1;
+		is_crossable[12][7]=-1;
+		is_crossable[12][8]=-1;
+		is_crossable[12][9]=-1;
+		is_crossable[12][10]=-1;
+		is_crossable[12][11]=-1;
+		is_crossable[12][13]=-1;	
+		is_crossable[12][15]=-1;
+		is_crossable[12][16]=-1;
+		is_crossable[12][17]=-1;	
+
+		is_crossable[13][9]=-1;
+		
+		is_crossable[14][2]=-1;
+		is_crossable[14][3]=-1;
+		is_crossable[14][5]=-1;
+		is_crossable[14][6]=-1;
+		is_crossable[14][7]=-1;
+		is_crossable[14][9]=-1;
+		is_crossable[14][11]=-1;
+		is_crossable[14][12]=-1;
+		is_crossable[14][13]=-1;
+		is_crossable[14][15]=-1;	
+		is_crossable[14][16]=-1;
+		
+		is_crossable[15][3]=-1;
+		is_crossable[15][15]=-1;
+		
+		
+		is_crossable[16][1]=-1;
+		is_crossable[16][3]=-1;
+		is_crossable[16][5]=-1;
+		is_crossable[16][7]=-1;
+		is_crossable[16][8]=-1;
+		is_crossable[16][9]=-1;
+		is_crossable[16][10]=-1;
+		is_crossable[16][11]=-1;
+		is_crossable[16][13]=-1;	
+		is_crossable[16][15]=-1;
+		is_crossable[16][17]=-1;	
+		
+		is_crossable[17][5]=-1;
+		is_crossable[17][9]=-1;
+		is_crossable[17][13]=-1;
+		
+		is_crossable[18][2]=-1;
+		is_crossable[18][3]=-1;
+		is_crossable[18][4]=-1;
+		is_crossable[18][5]=-1;
+		is_crossable[18][6]=-1;
+		is_crossable[18][7]=-1;
+		is_crossable[18][9]=-1;
+		is_crossable[18][11]=-1;
+		is_crossable[18][12]=-1;
+		is_crossable[18][13]=-1;
+		is_crossable[18][14]=-1;
+		is_crossable[18][15]=-1;
+		is_crossable[18][16]=-1;
+		
+		ArrayList<Position> p = new ArrayList<Position>();
+		p.add(new Position(15, 4));
+		System.out.println(FindPath.getInstance(is_crossable).printPath(new Position(15,4), new Position(19, 7), p, FindPath.getInstance().distanza(new Position(15, 4),new Position(19, 7))));
+		for(Position t:p)
+			System.out.println(t);
+	}
+	
 }

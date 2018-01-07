@@ -32,18 +32,18 @@ public class StartScreen implements Screen{
 		mainTable.bottom();
 		mainTable.setLayoutEnabled(false);
 		
-		Button start= new TextButton("  Start  ", Constant.skin);
+		Button start= new TextButton("Start", Constant.skin);
 		start.setColor(Color.RED);
-		start.setPosition(280, 250);
+		start.setPosition(210, 205);
 	
 		
-		TextButton settings= new TextButton("  Settings  ", Constant.skin);
+		TextButton settings= new TextButton("Settings", Constant.skin);
 		settings.setColor(Color.RED);
-		settings.setPosition(260, 150);
+		settings.setPosition(190, 105);
 		
-		TextButton info= new TextButton("  Info  ", Constant.skin);
+		TextButton info= new TextButton( "Info", Constant.skin);
 		info.setColor(Color.RED);
-		info.setPosition(280, 50);
+		info.setPosition(210, 5);
 		
 		stage = new Stage();
 		stage.addActor(mainTable);

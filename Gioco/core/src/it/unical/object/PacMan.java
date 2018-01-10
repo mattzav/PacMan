@@ -127,6 +127,7 @@ public class PacMan {
 				if (is_crossable[logic_x][logic_y] == Constant.SPECIALCOIN) {
 					isSpecial = true;
 					startTimeSpecial = System.currentTimeMillis();
+					Constant.pacman_eatfruit.play();
 				}
 
 				is_crossable[logic_x][logic_y] = Constant.FREE;

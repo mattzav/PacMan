@@ -276,8 +276,10 @@ public class PacManWorld {
 		ArrayList<Ghost> died = new ArrayList<Ghost>();
 		for (Ghost ghost : ghosts) {
 			if (ghost.getLogic_x() == pacman.getLogic_x() && ghost.getLogic_y() == pacman.getLogic_y()) {
-				if (pacman.isSpecial())
+				if (pacman.isSpecial()) {
 					died.add(ghost);
+					Constant.ghost_died.play();
+				}
 				else {
 					pacman.setDied();
 					Constant.pacman_dead.play();

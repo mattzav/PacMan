@@ -57,6 +57,8 @@ public class Constant {
 	public static Music pacman_dead = Gdx.audio.newMusic(Gdx.files.internal("music/dead.mp3"));
 	public static Music intro = Gdx.audio.newMusic(Gdx.files.internal("music/intro.mp3"));
 	public static Music pacman_pick_money = Gdx.audio.newMusic(Gdx.files.internal("music/pick.mp3"));
+	public static Music ghost_died= Gdx.audio.newMusic(Gdx.files.internal("music/eatghost.mp3"));
+	public static Music pacman_eatfruit= Gdx.audio.newMusic(Gdx.files.internal("music/eatfruit.mp3"));
 
 	public static int SPECIALCOIN = 2;
 	public static int COIN = 1;

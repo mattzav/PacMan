@@ -81,7 +81,7 @@ public class GameScreen implements Screen {
 				pacman.getLogic_y() * Constant.box_size + pacman.getInter_box() * pacman.getDirection().y,
 				400 - pacman.getLogic_x() * Constant.box_size - pacman.getInter_box() * pacman.getDirection().x);
 		for (Ghost ghost : world.getGhosts())
-			batch.draw(ghost.getImage(),
+			batch.draw(ghost.getImage(pacman.isSpecial()),
 					ghost.getLogic_y() * Constant.box_size + ghost.getInter_box() * ghost.getDirection().y,
 					400 - ghost.getLogic_x() * Constant.box_size - ghost.getInter_box() * ghost.getDirection().x);
 		batch.end();

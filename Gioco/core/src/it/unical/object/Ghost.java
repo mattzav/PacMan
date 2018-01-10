@@ -178,15 +178,30 @@ public class Ghost {
 			}
 		}
 		if (next_position.size() == 0 && direction.x == 0 && direction.y == 0) {
-				ArrayList<Position> pathposition = new ArrayList<Position>();
-				Position pacman_position = new Position(pacman.getLogic_x(), pacman.getLogic_y());
-				Position ghost_position = new Position(logic_x, logic_y);
-				pathposition.add(ghost_position);
+			ArrayList<Position> pathposition = new ArrayList<Position>();
+			Position pacman_position = new Position(pacman.getLogic_x(), pacman.getLogic_y());
+			Position ghost_position = new Position(logic_x, logic_y);
+			pathposition.add(ghost_position);
+			if (!pacman.isSpecial()) {
 				FindPath.getInstance().printPath(ghost_position, pacman_position, pathposition,
 						FindPath.getInstance().distanza(ghost_position, pacman_position));
 				for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
 					next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
-			
+			} else {
+				next_position.clear();
+				float max_distance = Float.MIN_VALUE;
+				Vector2 greedy_corners = null;
+				Vector2 pacman_vector = new Vector2(pacman.getLogic_x(), pacman.getLogic_y());
+				for (int i = 0; i < Constant.corners.length; i++)
+					if( pacman_vector.dst(Constant.corners[i]) > max_distance) {
+						max_distance=pacman_vector.dst(Constant.corners[i]);
+						greedy_corners=Constant.corners[i];
+					}
+				FindPath.getInstance().printEscapeRoute(ghost_position, new Position((int)greedy_corners.x, (int)greedy_corners.y), pathposition,
+						FindPath.getInstance().distanza(ghost_position, pacman_position), FindPath.getInstance().distanza(ghost_position, new Position((int)greedy_corners.x, (int)greedy_corners.y)),pacman_position);
+				for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
+					next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
+			}
 		}
 		while (!next_position.isEmpty() && direction.x == 0 && direction.y == 0) {
 			Vector2 next = next_position.remove(0);
@@ -203,7 +218,11 @@ public class Ghost {
 		this.inter_box = inter_box;
 	}
 
-	public Texture getImage() {
+	public Texture getImage(boolean pacmanIsSpecial) {
+
+		if (pacmanIsSpecial)
+			return Constant.scaryGhost;
+
 		if (direction.x == Constant.UP.x && direction.y == Constant.UP.y)
 			return Constant.ghost[colour][3];
 		else if (direction.x == Constant.DX.x && direction.y == Constant.DX.y)

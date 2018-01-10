@@ -8,6 +8,9 @@ import it.unical.utility.Constant;
 
 public class PacMan {
 
+	private boolean isSpecial;
+	private long startTimeSpecial;
+
 	private int logic_x;
 	private int logic_y;
 	private Vector2 next_direction;
@@ -22,6 +25,8 @@ public class PacMan {
 	private PacManWorld world;
 
 	private PacMan(int logic_x, int logic_y, PacManWorld world) {
+		this.isSpecial = false;
+		this.startTimeSpecial = 0;
 		this.animation = 0;
 		this.logic_x = logic_x;
 		this.logic_y = logic_y;
@@ -36,6 +41,14 @@ public class PacMan {
 		if (istance == null)
 			istance = new PacMan(logic_x, logic_y, world);
 		return istance;
+	}
+
+	public long getStartTimeSpecial() {
+		return startTimeSpecial;
+	}
+
+	public void setStartTimeSpecial(long startTimeSpecial) {
+		this.startTimeSpecial = startTimeSpecial;
 	}
 
 	public float getInter_box() {
@@ -62,6 +75,10 @@ public class PacMan {
 		return direction;
 	}
 
+	public boolean isSpecial() {
+		return isSpecial;
+	}
+
 	public void move_dx() {
 	}
 
@@ -84,7 +101,7 @@ public class PacMan {
 		this.direction.y = direction.y;
 	}
 
-	public void update(int[][] is_crossable,float delta) {
+	public void update(int[][] is_crossable, float delta) {
 		if (!is_died) {
 			animation += 0.1;
 			animation %= 2;
@@ -93,24 +110,38 @@ public class PacMan {
 			animation %= 9;
 			return;
 		}
+
+		if (isSpecial && System.currentTimeMillis() - startTimeSpecial >= 10000) {
+			isSpecial = false;
+		}
 		if (direction.x == 0 && direction.y == 0)
 			return;
-		inter_box += 2*delta*40;
+		inter_box += 2 * delta * 40;
 		if (inter_box >= Constant.box_size + 2) {
 
 			logic_x += direction.x;
 			logic_y += direction.y;
 			if (is_crossable[logic_x][logic_y] == Constant.COIN
 					|| is_crossable[logic_x][logic_y] == Constant.SPECIALCOIN) {
+
+				if (is_crossable[logic_x][logic_y] == Constant.SPECIALCOIN) {
+					isSpecial = true;
+					startTimeSpecial = System.currentTimeMillis();
+				}
+
 				is_crossable[logic_x][logic_y] = Constant.FREE;
 				world.remove_coin(logic_x, logic_y);
 				Constant.pacman_pick_money.play();
 			}
 			inter_box = 0;
-			if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y + next_direction.y)] == Constant.WALL) {
+			
+			if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
+				logic_y = 0;
+			} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
+				logic_y = 18;
+			} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
+					+ next_direction.y)] == Constant.WALL) {
 				if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
-					// next_direction.x = direction.x;
-					// next_direction.y = direction.y;
 				} else {
 					next_direction.x = 0;
 					next_direction.y = 0;

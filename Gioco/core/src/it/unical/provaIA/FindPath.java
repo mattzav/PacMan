@@ -68,11 +68,6 @@ public class FindPath {
 		}
 	
 		for (int i = 0; i < 4; i++) {
-			if(start.getX() == 15 && start.getY()==4)
-				System.out.println(dir_greedy[i]);
-		}
-		
-		for (int i = 0; i < 4; i++) {
 			
 			// destra
 			if (dir_greedy[i] == "destra") {
@@ -99,12 +94,10 @@ public class FindPath {
 			}
 			// sinistra
 			else if (dir_greedy[i] == "sinistra") {
-				if(start.getX() == 15 && start.getY()==4)
-					System.out.println("dovrei andare a sinistra");
+				
 				if (is_crossable[start.getX()][start.getY() - 1] != -1
 						&& distanza(new Position(start.getX(), start.getY() - 1), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX(), start.getY() - 1))) {
-					System.out.println("vado a sinistra");
 
 					path.add(new Position(start.getX(), start.getY() - 1));
 					
@@ -122,13 +115,11 @@ public class FindPath {
 			}
 			// sopra
 			else if (dir_greedy[i] == "sopra") {
-				if(start.getX() == 15 && start.getY()==4)
-					System.out.println("dovrei andare a sopra");
+				
 
 				if (is_crossable[start.getX() - 1][start.getY()] != -1
 						&& distanza(new Position(start.getX() - 1, start.getY()), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX() - 1, start.getY()))) {
-					System.out.println("vado sopra");
 
 					path.add(new Position(start.getX() - 1, start.getY()));
 					
@@ -146,13 +137,10 @@ public class FindPath {
 
 			// sotto
 			else {
-				if(start.getX() == 15 && start.getY()==4)
-					System.out.println("dovrei andare a sotto");
 
 				if (is_crossable[start.getX() + 1][start.getY()] != -1
 						&& distanza(new Position(start.getX() + 1, start.getY()), end) < start_distance + 4
 						&& !path.contains(new Position(start.getX() + 1, start.getY()))) {
-					System.out.println("vado sotto");
 
 					path.add(new Position(start.getX() + 1, start.getY()));
 					
@@ -343,6 +331,144 @@ public class FindPath {
 		System.out.println(FindPath.getInstance(is_crossable).printPath(new Position(15,4), new Position(19, 7), p, FindPath.getInstance().distanza(new Position(15, 4),new Position(19, 7))));
 		for(Position t:p)
 			System.out.println(t);
+	}
+	public boolean printEscapeRoute(Position start, Position end, ArrayList<Position> pathposition,
+			float distance_pacman,float distance_end, Position pacman_position) {
+		
+		int greedy[] = new int[4];
+		String dir_greedy[] = { "destra", "sopra", "sinistra", "sotto" };
+		
+		// peso di andare a destra
+		greedy[0] = (int) (end.getY() - start.getY());
+
+		// peso di andare sopra
+		greedy[1] = (int) (start.getX() - end.getX());
+
+		// peso di andare sinistra
+		greedy[2] = (int) -(end.getY() - start.getY());
+
+		// peso di andare sotto
+		greedy[3] = (int) -(start.getX() - end.getX());
+
+		boolean found = true;
+		while (found) {
+
+			found = false;
+			for (int i = 0; i < 3; i++)
+				if (greedy[i] < greedy[i + 1]) {
+
+					found = true;
+
+					int tmp = greedy[i];
+					greedy[i] = greedy[i + 1];
+					greedy[i + 1] = tmp;
+
+					String str_tmp = dir_greedy[i];
+					dir_greedy[i] = dir_greedy[i + 1];
+					dir_greedy[i + 1] = str_tmp;
+				}
+
+		}
+	
+		
+		
+		for (int i = 0; i < 4; i++) {
+			
+			// destra
+			if (dir_greedy[i] == "destra") {
+				
+				if (is_crossable[start.getX()][start.getY() + 1] != -1
+						&& distanza(new Position(start.getX(), start.getY() + 1), end) < distance_end + 10
+						&& distanza(new Position(start.getX(),start.getY()+1),pacman_position) > distance_pacman-3
+						&& (start.getX() != pacman_position.getX() || start.getY()+1 != pacman_position.getY())
+						&& !pathposition.contains(new Position(start.getX(), start.getY() + 1))) {
+
+					pathposition.add(new Position(start.getX(), start.getY() + 1));
+					
+					if (start.getX() == end.getX() && start.getY() + 1 == end.getY())
+						return true;
+					
+					if (printEscapeRoute(new Position(start.getX(), start.getY() + 1), end, pathposition, distance_pacman,distance_end,pacman_position))
+						return true;
+					
+					pathposition.remove(pathposition.size() - 1);
+					
+
+				}
+
+			}
+			// sinistra
+			else if (dir_greedy[i] == "sinistra") {
+				
+				if (is_crossable[start.getX()][start.getY() - 1] != -1
+						&& distanza(new Position(start.getX(), start.getY() - 1), end) < distance_end + 10
+						&& distanza(new Position(start.getX(),start.getY()-1),pacman_position) > distance_pacman-3
+						&& (start.getX() != pacman_position.getX() || start.getY()-1 != pacman_position.getY())
+						&& !pathposition.contains(new Position(start.getX(), start.getY() - 1))) {
+
+					pathposition.add(new Position(start.getX(), start.getY() - 1));
+					
+					if (start.getX() == end.getX() && start.getY() - 1 == end.getY())
+						return true;
+					
+					if (printEscapeRoute(new Position(start.getX(), start.getY() - 1), end, pathposition,distance_pacman, distance_end,pacman_position))
+						return true;
+					
+					pathposition.remove(pathposition.size() - 1);
+					
+
+				}
+
+			}
+			// sopra
+			else if (dir_greedy[i] == "sopra") {
+				
+				if (is_crossable[start.getX() - 1][start.getY()] != -1
+						&& distanza(new Position(start.getX() - 1, start.getY()), end) < distance_end + 10
+						&& distanza(new Position(start.getX()-1,start.getY()),pacman_position) > distance_pacman-3
+						&& (start.getX()-1 != pacman_position.getX() || start.getY() != pacman_position.getY())
+						&& !pathposition.contains(new Position(start.getX() - 1, start.getY()))) {
+
+					pathposition.add(new Position(start.getX() - 1, start.getY()));
+					
+					if (start.getX() - 1 == end.getX() && start.getY() == end.getY())
+						return true;
+					
+					if (printEscapeRoute(new Position(start.getX() - 1, start.getY()), end, pathposition,distance_pacman,distance_end, pacman_position))
+						return true;
+					
+					pathposition.remove(pathposition.size() - 1);
+					
+
+				}
+			}
+
+			// sotto
+			else {
+				
+
+				if (is_crossable[start.getX() + 1][start.getY()] != -1
+						&& distanza(new Position(start.getX() + 1, start.getY()), end) < distance_end + 10
+						&& distanza(new Position(start.getX()+1,start.getY()),pacman_position) > distance_pacman-3
+						&& (start.getX()+1 != pacman_position.getX() || start.getY() != pacman_position.getY())
+						&& !pathposition.contains(new Position(start.getX() + 1, start.getY()))) {
+
+					pathposition.add(new Position(start.getX() + 1, start.getY()));
+					
+					if (start.getX() + 1 == end.getX() && start.getY() == end.getY())
+						return true;
+					
+					if (printEscapeRoute(new Position(start.getX() + 1, start.getY()), end, pathposition,distance_pacman,distance_end,pacman_position))
+						return true;
+					
+					pathposition.remove(pathposition.size() - 1);
+					
+
+				}
+			}
+		}
+		return false;
+		
 	}
 	
 }

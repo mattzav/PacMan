@@ -24,8 +24,8 @@ public class Constant {
 	public static Texture maze = new Texture(path + "maze.png");
 	public static Texture coin = new Texture(path + "moneta.png");
 	public static Texture starting = new Texture(path + "starting-.jpg");
-	public static Texture title = new Texture(path+"image.png");
-	public static Texture icon = new Texture(path+"icon.png");
+	public static Texture title = new Texture(path + "image.png");
+	public static Texture icon = new Texture(path + "icon.png");
 
 	public static Texture[][] pacman = {
 			{ new Texture(path + "pacmanDestra1.png"), new Texture(path + "pacmanDestra2.png") },
@@ -33,13 +33,16 @@ public class Constant {
 			{ new Texture(path + "pacmanSu1.png"), new Texture(path + "pacmanSu2.png") },
 			{ new Texture(path + "pacmanGiu1.png"), new Texture(path + "pacmanGiu2.png") } };
 
-	public static Texture[] pacman_died= {new Texture(path+"Morte1.png"),new Texture(path+"Morte2.png"),new Texture(path+"Morte3.png"), new Texture(path+"Morte4.png"), new Texture(path+"Morte5.png"), new Texture(path+"Morte6.png"),
-			new Texture(path+"Morte7.png"),new Texture(path+"Morte8.png"),new Texture(path+"Morte9.png")};
+	public static Texture[] pacman_died = { new Texture(path + "Morte1.png"), new Texture(path + "Morte2.png"),
+			new Texture(path + "Morte3.png"), new Texture(path + "Morte4.png"), new Texture(path + "Morte5.png"),
+			new Texture(path + "Morte6.png"), new Texture(path + "Morte7.png"), new Texture(path + "Morte8.png"),
+			new Texture(path + "Morte9.png") };
 
 	public static Texture[] coin_image = { new Texture(path + "moneta1.png"), new Texture(path + "moneta2.png"),
 			new Texture(path + "moneta3.png"), new Texture(path + "moneta4.png"), new Texture(path + "moneta5.png"),
 			new Texture(path + "moneta6.png") };
 
+	public static Texture scaryGhost = new Texture(path + "scaryGhost.png");
 	public static Texture[][] ghost = {
 			{ new Texture(path + "ArancioDestra.png"), new Texture(path + "ArancioGiu.png"),
 					new Texture(path + "ArancioSinistra.png"), new Texture(path + "ArancioSu.png") },
@@ -60,10 +63,13 @@ public class Constant {
 	public static int FREE = 0;
 	public static int WALL = -1;
 	public static Texture background = new Texture(path + "back.jpg");
-	
+
 	public static TextureAtlas texture = new TextureAtlas(Gdx.files.internal("Skin/arcade-ui.atlas"));
 	public static Skin skin = new Skin(Gdx.files.internal("Skin/arcade-ui.json"), texture);
-	
-	public static int MENUSTATE=0;
-	public static int GAMESTATE=1;
+
+	public static int MENUSTATE = 0;
+	public static int GAMESTATE = 1;
+
+	public static Vector2[] corners = { new Vector2(1, 1), new Vector2(1, 17), new Vector2(19, 1),
+			new Vector2(19, 17) };
 }

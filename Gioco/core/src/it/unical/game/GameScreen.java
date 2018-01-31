@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
 	public GameScreen(PacManGame game) {
 		this.game = game;
 		batch = new SpriteBatch();
-		world = new PacManWorld();
+		world = new PacManWorld(1);
 		isDied = false;
 	}
 
@@ -62,6 +62,9 @@ public class GameScreen implements Screen {
 			if (loading_dead >= 60)
 				JOptionPane.showMessageDialog(null, "hai perso");
 			drawWorld(delta);
+			if(world.isCompleted()) {
+				world=new PacManWorld(world.getLevel()+1);
+			}
 		
 	}
 
@@ -73,10 +76,11 @@ public class GameScreen implements Screen {
 		batch.draw(Constant.title, 0, 400);
 		batch.draw(Constant.icon, 420, 450);
 
-		PacMan pacman = PacMan.getIstance(1, 1, world);
 		for (Coin coin : world.getCoins())
 			batch.draw(coin.getImage(delta), coin.getLogic_y() * Constant.box_size,
 					400 - coin.getLogic_x() * Constant.box_size);
+
+		PacMan pacman = world.getPacman();
 		batch.draw(pacman.getImage(),
 				pacman.getLogic_y() * Constant.box_size + pacman.getInter_box() * pacman.getDirection().y,
 				400 - pacman.getLogic_x() * Constant.box_size - pacman.getInter_box() * pacman.getDirection().x);

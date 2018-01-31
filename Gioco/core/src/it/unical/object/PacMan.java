@@ -19,12 +19,9 @@ public class PacMan {
 	private boolean is_died;
 
 	private float animation;
-
-	private static PacMan istance;
-
 	private PacManWorld world;
 
-	private PacMan(int logic_x, int logic_y, PacManWorld world) {
+	public PacMan(int logic_x, int logic_y, PacManWorld world) {
 		this.isSpecial = false;
 		this.startTimeSpecial = 0;
 		this.animation = 0;
@@ -37,11 +34,6 @@ public class PacMan {
 		this.world = world;
 	}
 
-	public static PacMan getIstance(int logic_x, int logic_y, PacManWorld world) {
-		if (istance == null)
-			istance = new PacMan(logic_x, logic_y, world);
-		return istance;
-	}
 
 	public long getStartTimeSpecial() {
 		return startTimeSpecial;

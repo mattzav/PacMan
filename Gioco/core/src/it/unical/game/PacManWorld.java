@@ -19,15 +19,17 @@ public class PacManWorld {
 	private ArrayList<Bonus> bonus; // mettere nella matrice
 	private int is_crossable[][];
 	private int level;
+	private int point;
 
 	public PacManWorld(int level) {
 
 		this.ghosts = new ArrayList<Ghost>();
+		this.point = 0;
 		int speed_ghost = 1 + Math.abs((level - 1)) / 10;
 		this.ghosts.add(new Ghost(11, 12, 3, speed_ghost));
-		this.ghosts.add(new Ghost(16, 12, 1,speed_ghost));
-		this.ghosts.add(new Ghost(6, 4, 0,speed_ghost));
-		this.ghosts.add(new Ghost(6, 8, 2,speed_ghost));
+		this.ghosts.add(new Ghost(16, 12, 1, speed_ghost));
+		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
+		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
 		this.level = level;
 
 		this.coins = new ArrayList<Coin>();
@@ -281,6 +283,7 @@ public class PacManWorld {
 			if (ghost.getLogic_x() == pacman.getLogic_x() && ghost.getLogic_y() == pacman.getLogic_y()) {
 				if (pacman.isSpecial()) {
 					died.add(ghost);
+					point+=300;
 					Constant.ghost_died.play();
 				} else {
 					pacman.setDied();
@@ -301,4 +304,11 @@ public class PacManWorld {
 		return coins.size() + bonus.size() == 0;
 	}
 
+	public void pacmanPicked(int COIN) {
+		point+=COIN*50;
+	}
+
+	public int getPoint() {
+		return point;
+	}
 }

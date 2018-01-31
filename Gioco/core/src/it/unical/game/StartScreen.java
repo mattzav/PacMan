@@ -23,7 +23,7 @@ public class StartScreen implements Screen{
 	private Stage stage;
 	
 	public StartScreen(final PacManGame game) {
-		Constant.intro.play();
+//		Constant.intro.play();
 		this.game=game;
 		batch = new SpriteBatch();
 		

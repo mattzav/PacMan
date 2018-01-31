@@ -1,10 +1,13 @@
 package it.unical.utility;
 
-import com.badlogic.gdx.Audio;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
@@ -54,8 +57,6 @@ public class Constant {
 					new Texture(path + "rosaSinistra.png"), new Texture(path + "rosaSu.png") },
 			{ new Texture(path + "rossoDestra.png"), new Texture(path + "rossoGiu.png"),
 					new Texture(path + "rossoSinistra.png"), new Texture(path + "rossoSu.png") } };
-
-	public static Music pacman_eats_ghost = Gdx.audio.newMusic(Gdx.files.internal("music/eatghost.mp3"));
 	public static Music pacman_dead = Gdx.audio.newMusic(Gdx.files.internal("music/dead.mp3"));
 	public static Music intro = Gdx.audio.newMusic(Gdx.files.internal("music/intro.mp3"));
 	public static Music pacman_pick_money = Gdx.audio.newMusic(Gdx.files.internal("music/pick.mp3"));
@@ -80,4 +81,7 @@ public class Constant {
 	public static int distanza(Position p1, Position p2) {
 		return Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getY() - p2.getY());
 	}
+	
+	
+
 }

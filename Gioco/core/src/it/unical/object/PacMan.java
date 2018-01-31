@@ -119,10 +119,12 @@ public class PacMan {
 				if (is_crossable[logic_x][logic_y] == Constant.SPECIALCOIN) {
 					isSpecial = true;
 					startTimeSpecial = System.currentTimeMillis();
+					world.pacmanPicked(Constant.SPECIALCOIN);
 					Constant.pacman_eatfruit.play();
 				}
 
 				is_crossable[logic_x][logic_y] = Constant.FREE;
+				world.pacmanPicked(Constant.COIN);
 				world.remove_coin(logic_x, logic_y);
 				Constant.pacman_pick_money.play();
 			}

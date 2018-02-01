@@ -45,7 +45,7 @@ public class GameScreen implements Screen {
 		batch = new SpriteBatch();
 		world = new PacManWorld(1);
 		isDied = false;
-		generator1 = new FreeTypeFontGenerator(Gdx.files.internal("font/CrackMan.ttf"));
+		generator1 = new FreeTypeFontGenerator(Gdx.files.internal("font/CrackMan.TTF"));
 		generator2 = new FreeTypeFontGenerator(Gdx.files.internal("font/PacFont.ttf"));
 		parameterTitle = new FreeTypeFontParameter();
 		parameterPoint = new FreeTypeFontParameter();

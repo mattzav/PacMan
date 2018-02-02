@@ -9,15 +9,6 @@ public class Collectable {
 	public Collectable(int logic_x, int logic_y) {
 		this.logic_x = logic_x;
 		this.logic_y = logic_y;
-		this.isCollected = isCollected;
-	}
-	
-	public void setCollected() {
-		this.isCollected=true;
-	}
-	
-	public boolean isCollected() {
-		return isCollected;
 	}
 	
 	public int getLogic_x() {

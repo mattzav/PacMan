@@ -1,9 +1,13 @@
 package it.unical.object;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 
 import it.unical.game.PacManWorld;
+import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 public class PacMan {
@@ -21,6 +25,8 @@ public class PacMan {
 	private float animation;
 	private PacManWorld world;
 
+	ArrayList<Position> nextSteps; 
+	
 	public PacMan(int logic_x, int logic_y, PacManWorld world) {
 		this.isSpecial = false;
 		this.startTimeSpecial = 0;
@@ -32,6 +38,7 @@ public class PacMan {
 		is_died = false;
 		direction = new Vector2(0, 0);
 		this.world = world;
+		nextSteps= new ArrayList<>();
 	}
 
 
@@ -181,6 +188,12 @@ public class PacMan {
 
 	public void setDied() {
 		this.is_died = true;
+	}
+
+
+	public boolean hasMoreSteps() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

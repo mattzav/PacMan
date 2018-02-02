@@ -9,10 +9,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Queue;
 
+import it.unical.mat.embasp.languages.Id;
 import it.unical.provaIA.FindPath;
 import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
+@Id("nemico")
 public class Ghost {
 
 	private int logic_x;
@@ -173,11 +175,11 @@ public class Ghost {
 
 	public void update(PacMan pacman, int[][] is_crossable, float delta) {
 
-		// se non è fermo aggiorno la posizione
+		// se non ï¿½ fermo aggiorno la posizione
 		if (!(direction.x == 0 && direction.y == 0)) {
 			inter_box += 1.5 * delta * speed * 40;
 			
-			//se è arrivato alla casella successiva lo fermo
+			//se ï¿½ arrivato alla casella successiva lo fermo
 			if (inter_box >= Constant.box_size + 1) {
 				inter_box = 0;
 				logic_x += direction.x;
@@ -188,14 +190,14 @@ public class Ghost {
 				direction.y = 0;
 			}
 		}
-		// se è fermo e non ha altre posizioni da raggiungere eseguo il nuovo calcolo
+		// se ï¿½ fermo e non ha altre posizioni da raggiungere eseguo il nuovo calcolo
 		if (next_position.size() == 0 && direction.x == 0 && direction.y == 0) {
 			ArrayList<Position> pathposition = new ArrayList<Position>();
 			Position pacman_position = new Position(pacman.getLogic_x(), pacman.getLogic_y());
 			Position ghost_position = new Position(logic_x, logic_y);
 			pathposition.add(ghost_position);
 			
-			// se pacman non è speciale
+			// se pacman non ï¿½ speciale
 			if (!pacman.isSpecial()) {
 				
 				// se entra nel raggio di 7 caselle lo insegue
@@ -238,7 +240,7 @@ public class Ghost {
 					}
 				}
 			} 
-			// se invece pacman è speciale cerca il cammino verso l'angolo più lontano da pacman
+			// se invece pacman ï¿½ speciale cerca il cammino verso l'angolo piï¿½ lontano da pacman
 			else {
 				next_position.clear();
 				float max_distance = Float.MIN_VALUE;
@@ -261,7 +263,7 @@ public class Ghost {
 			}
 		}
 		
-		// qui aggiorno la nuova direzione: finchè ho posizioni da raggiungere, prendo la successiva e calcolo la direzione
+		// qui aggiorno la nuova direzione: finchï¿½ ho posizioni da raggiungere, prendo la successiva e calcolo la direzione
 		// come sottrazione tra le coordinate di partena e di arrivo
 		while (!next_position.isEmpty() && direction.x == 0 && direction.y == 0) {
 			Vector2 next = next_position.remove(0);

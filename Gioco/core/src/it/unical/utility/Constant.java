@@ -24,7 +24,7 @@ public class Constant {
 	public static int maze_height = 580;
 	public static float box_size = maze_width / 26;
 
-	public static String path = "/home/matteo/git/PacMan/Gioco/core/assets/img/";
+	public static String path = "img/";
 
 	public static Texture maze = new Texture(path + "maze.png");
 	public static Texture coin = new Texture(path + "moneta.png");

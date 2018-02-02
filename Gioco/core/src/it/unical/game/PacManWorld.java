@@ -4,11 +4,15 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 
+import it.unical.inputobject.Cell;
+import it.unical.mat.embasp.base.InputProgram;
 import it.unical.object.Bonus;
 import it.unical.object.Coin;
+import it.unical.object.Collectable;
 import it.unical.object.Ghost;
 import it.unical.object.PacMan;
 import it.unical.provaIA.FindPath;
+import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 public class PacManWorld {
@@ -310,5 +314,31 @@ public class PacManWorld {
 
 	public int getPoint() {
 		return point;
+	}
+
+	public String getOptimalProgram() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public InputProgram getInputFacts(String program) {
+		InputProgram returnValue=new InputProgram();
+		try {
+			if(program.equals("raccogliMonete")) {
+				
+				for (int i = 0; i < is_crossable.length; i++) 
+					for (int j = 0; j < is_crossable[i].length; j++) 
+						if(is_crossable[i][j]==Constant.FREE)
+							returnValue.addObjectInput(new Cell(i, j));
+						else if(is_crossable[i][j]==Constant.COIN)
+							returnValue.addObjectInput(new Collectable(i, j,"normale",) );
+						else if(is_crossable[i][j]==Constant.SPECIALCOIN)
+							returnValue.addObjectInput(new Collectable(i, j,"speciale") );
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return returnValue;
 	}
 }

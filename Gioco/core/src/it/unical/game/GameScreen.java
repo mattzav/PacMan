@@ -5,6 +5,12 @@ import javax.swing.JOptionPane;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
+import it.unical.mat.embasp.base.Handler;
+import it.unical.mat.embasp.base.InputProgram;
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
+import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
+import it.unical.mat.embasp.specializations.dlv2.DLV2AnswerSets;
+import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 import it.unical.object.Coin;
 import it.unical.object.Ghost;
 import it.unical.object.PacMan;
@@ -29,6 +35,13 @@ public class GameScreen implements Screen {
 	private int loading = 0;
 	private boolean isDied;
 	private int loading_dead = 0;
+	
+	//EmbASP integration
+	private static Handler handler;
+	private static String encondingPath="/encodings/CryptoPacman/";
+	private static String encondingName="raccogliMonete";
+	private InputProgram facts;
+	private InputProgram encoding;
 
 	// disegnare
 	private SpriteBatch batch;
@@ -39,9 +52,12 @@ public class GameScreen implements Screen {
 	private FreeTypeFontParameter parameterPoint;
 	private BitmapFont fontTitle;
 	private BitmapFont fontPoint;
+	private boolean aiPlays;
 
-	public GameScreen(PacManGame game) {
+	public GameScreen(PacManGame game,boolean aiPlays) {
+		
 		this.game = game;
+		this.aiPlays=aiPlays;
 		batch = new SpriteBatch();
 		world = new PacManWorld(1);
 		isDied = false;
@@ -55,6 +71,10 @@ public class GameScreen implements Screen {
 		parameterPoint.size = 24;
 		parameterPoint.color = Color.LIGHT_GRAY;
 		fontPoint= generator1.generateFont(parameterPoint);
+		
+		handler=new DesktopHandler(new DLV2DesktopService("idlv2"));
+		facts=new ASPInputProgram();
+		encoding=new ASPInputProgram();;
 	}
 
 	@Override
@@ -65,14 +85,26 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
 		world.updatePlayer(delta);
 		if (!isDied) {
-			if (Gdx.input.isKeyJustPressed(Keys.UP))
-				world.updatePlayerNextDirection(Constant.UP);
-			else if (Gdx.input.isKeyJustPressed(Keys.DOWN))
-				world.updatePlayerNextDirection(Constant.DOWN);
-			else if (Gdx.input.isKeyJustPressed(Keys.LEFT))
-				world.updatePlayerNextDirection(Constant.SX);
-			else if (Gdx.input.isKeyJustPressed(Keys.RIGHT))
-				world.updatePlayerNextDirection(Constant.DX);
+			if(!aiPlays) {
+				if (Gdx.input.isKeyJustPressed(Keys.UP))
+					world.updatePlayerNextDirection(Constant.UP);
+				else if (Gdx.input.isKeyJustPressed(Keys.DOWN))
+					world.updatePlayerNextDirection(Constant.DOWN);
+				else if (Gdx.input.isKeyJustPressed(Keys.LEFT))
+					world.updatePlayerNextDirection(Constant.SX);
+				else if (Gdx.input.isKeyJustPressed(Keys.RIGHT))
+					world.updatePlayerNextDirection(Constant.DX);
+			}else {
+				if(!world.getPacman().hasMoreSteps()) {
+					//valutare se aggiungere programma dlv che dicide quale programma lanciare	
+					encondingName=world.getOptimalProgram();
+					encoding=new ASPInputProgram();
+					encoding.addFilesPath(encondingPath+encondingName);
+					encoding.addFilesPath(encondingPath+"utility.py");
+					facts=world.getInputFacts();
+					encoding.addProgram(facts);
+				}
+			}
 			isDied = world.checkPlayerDied();
 			world.updateEnemy(delta);
 		}

@@ -2,6 +2,7 @@ package it.unical.object;
 
 import com.badlogic.gdx.graphics.Texture;
 
+import it.unical.mat.embasp.languages.Id;
 import it.unical.utility.Constant;
 
 public class Coin extends Collectable {

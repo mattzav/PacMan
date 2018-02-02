@@ -1,0 +1,52 @@
+%casella(X,Y).
+%moneta(X,Y,Tipo).
+%pacman(X,Y).
+%nemicoPiuVicino(X,Y).
+%numeroMosseMassimo(X).
+
+casella(1,1). casella(1,2). casella(1,3). casella(1,4). casella(1,5). casella(1,6).
+casella(2,1). casella(2,2). casella(2,3). casella(2,4). casella(2,5). casella(2,6).
+casella(3,1). casella(3,2).  casella(3,4). casella(3,5). casella(3,6).
+casella(4,1). casella(4,2).  casella(4,4). casella(4,5). casella(4,6).
+ casella(5,2). casella(5,3). casella(5,5). casella(5,6).
+ casella(6,2). casella(6,3). casella(6,4). casella(6,5). casella(6,6).
+
+moneta(3,2,normale).
+moneta(5,3,normale).
+moneta(6,3,normale).
+moneta(6,2,speciale).
+
+pacman(5,2).
+nemicoPiuVicino(4,4).
+%posizione iniziale
+pacmanDLV(0,X,Y):-pacman(X,Y).
+
+%Guess sulle mosee possibili
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<3.
+
+%vincolo mossa consentita
+:- up(T),pacmanDLV(T,X,Y),not casella(X-1,Y).
+:- down(T),pacmanDLV(T,X,Y),not casella(X+1,Y).
+:- left(T),pacmanDLV(T,X,Y),not casella(X,Y-1).
+:- right(T),pacmanDLV(T,X,Y),not casella(X,Y+1).
+
+%aggiorna posizione pacman
+pacmanDLV(T+1,X-1,Y):-up(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
+
+raccoltaMonetaNormale(T,X,Y):- pacmanDLV(T,X,Y),moneta(X,Y,normale).
+raccoltaMonetaNormale(T+1,X,Y):-raccoltaMonetaNormale(T,X,Y),T<3.
+
+:~ pacmanDLV(T,X,Y), not moneta(X,Y,normale). [1@2,T,X,Y]
+:~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@2,T,X,Y]
+
+doveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,normale),not raccoltaMonetaNormale(T-1,X,Y),X>=X1-1,Y>=Y1-1,X<=X1+1,Y<=Y1+1}=0, not moneta(X1,Y1,speciale). 
+:~doveviRaccogliere(T,X1,Y1). [1@1,T,X1,Y1] 
+nonDoveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,normale),not raccoltaMonetaNormale(T-1,X,Y),X>=X1-1,Y>=Y1-1,X<=X1+1,Y<=Y1+1}>0, moneta(X1,Y1,speciale). 
+:~nonDoveviRaccogliere(T,X1,Y1).[1@1,T,X1,Y1] 
+%:~ pacmanDLV(T,X,Y), not moneta(X,Y,speciale) ,#count{R,C : moneta(R,C,normale),not raccoltaMonetaNormale(T,R,C)}=0. [1@1,T,X,Y]
+%:~ pacmanDLV(T,X,Y), moneta(X,Y,speciale) ,#count{R,C : moneta(R,C,normale),not raccoltaMonetaNormale(T,R,C)}>0. [1@1,T,X,Y]
+
+%aggiungere controllo vicinanza nemici

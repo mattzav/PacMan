@@ -3,33 +3,22 @@ package it.unical.inputobject;
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
-@Id("pacmanDLV")
-public class PacmanDLV {
-
-	@Param(0)
-	int t;
-	@Param(1)
-	int x;
-	@Param(2)
-	int y;
+@Id("casella")
+public class Casella {
 	
-	public PacmanDLV() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public PacmanDLV(int t, int x, int y) {
+	@Param(0)
+	private int x;
+	@Param(1)
+	private int y;
+	
+	public Casella(int x, int y) {
 		super();
-		this.t = t;
 		this.x = x;
 		this.y = y;
 	}
-
-	public int getT() {
-		return t;
-	}
-
-	public void setT(int t) {
-		this.t = t;
+	
+	public Casella() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getX() {
@@ -47,6 +36,7 @@ public class PacmanDLV {
 	public void setY(int y) {
 		this.y = y;
 	}
+	
 	
 	
 }

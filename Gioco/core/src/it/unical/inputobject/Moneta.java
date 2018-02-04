@@ -3,21 +3,24 @@ package it.unical.inputobject;
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
-@Id("casella")
-public class Cell {
-	
+@Id("moneta")
+public class Moneta {
+
 	@Param(0)
 	private int x;
 	@Param(1)
 	private int y;
+	@Param(2)
+	private String type;
 	
-	public Cell(int x, int y) {
+	public Moneta(int x, int y,String type) {
 		super();
 		this.x = x;
 		this.y = y;
+		this.type=type;
 	}
 	
-	public Cell() {
+	public Moneta() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -35,6 +38,14 @@ public class Cell {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

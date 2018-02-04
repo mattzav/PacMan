@@ -18,7 +18,7 @@ public class PacManGame extends Game {
 	@Override
 	public void create() {
 		menu = new StartScreen(this);
-		game = new GameScreen(this);
+		game = new GameScreen(this,true);
 		setScreen(menu);
 	}
 

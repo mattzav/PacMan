@@ -1,7 +1,6 @@
 %casella(X,Y).
 %moneta(X,Y,Tipo,Peso).
 %pacman(X,Y).
-%mosse(0..2).
 %nemico(ID,Peso,X,Y).
 %distanza(T,ID,Distanza).
 %distanzaFisica(X,Y,X1,Y1,D).
@@ -13,7 +12,7 @@
 pacmanDLV(0,X,Y):-pacman(X,Y).
 
 %Guess sulle mosee possibili
-up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),mosse(T).
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<3.
 
 %vincolo mossa consentita
 :- up(T),pacmanDLV(T,X,Y),not casella(X-1,Y).

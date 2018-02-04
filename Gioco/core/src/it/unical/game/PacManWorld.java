@@ -4,8 +4,13 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 
-import it.unical.inputobject.Cell;
+import it.unical.inputobject.Casella;
+import it.unical.inputobject.Moneta;
+import it.unical.inputobject.NemicoVicino;
+import it.unical.inputobject.Pacman;
+import it.unical.inputobject.raccoglimonete.MonetaVicina;
 import it.unical.mat.embasp.base.InputProgram;
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.object.Bonus;
 import it.unical.object.Coin;
 import it.unical.object.Collectable;
@@ -322,23 +327,54 @@ public class PacManWorld {
 	}
 
 	public InputProgram getInputFacts(String program) {
-		InputProgram returnValue=new InputProgram();
+		
+		InputProgram returnValue=new ASPInputProgram();
 		try {
 			if(program.equals("raccogliMonete")) {
 				
 				for (int i = 0; i < is_crossable.length; i++) 
 					for (int j = 0; j < is_crossable[i].length; j++) 
 						if(is_crossable[i][j]==Constant.FREE)
-							returnValue.addObjectInput(new Cell(i, j));
+							returnValue.addObjectInput(new Casella(i, j));
 						else if(is_crossable[i][j]==Constant.COIN)
-							returnValue.addObjectInput(new Collectable(i, j,"normale",) );
+							returnValue.addObjectInput(new Moneta(i, j,"normale") );
 						else if(is_crossable[i][j]==Constant.SPECIALCOIN)
-							returnValue.addObjectInput(new Collectable(i, j,"speciale") );
+							returnValue.addObjectInput(new Moneta(i, j,"speciale") );
+					returnValue.addObjectInput(new Pacman(pacman.getLogic_x(),pacman.getLogic_y()));
+					returnValue.addObjectInput(nearestCoin());
+					returnValue.addObjectInput(nearestEnemy());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return returnValue;
+	}
+
+	private NemicoVicino nearestEnemy() {
+		int minDist=Integer.MAX_VALUE;
+		Ghost nearestEnemy=null;
+		for(Ghost ghost: ghosts) {
+			int dist=Constant.distanza(new Position(ghost.getLogic_x(),ghost.getLogic_y()), new Position(pacman.getLogic_x(),pacman.getLogic_y()));
+			if(dist<minDist) {
+				minDist=dist;
+				nearestEnemy=ghost;
+			}
+		}
+		return new NemicoVicino(nearestEnemy.getLogic_x(),nearestEnemy.getLogic_y());
+	}
+
+	private MonetaVicina nearestCoin() {
+		
+		int minDist=Integer.MAX_VALUE;
+		Coin nearestCoin=null;
+		for(Coin coin: coins) {
+			int dist=Constant.distanza(new Position(coin.getLogic_x(),coin.getLogic_y()), new Position(pacman.getLogic_x(),pacman.getLogic_y()));
+			if(dist<minDist && !coin.isSpecialCoin()) {
+				minDist=dist;
+				nearestCoin=coin;
+			}
+		}
+		return new MonetaVicina(nearestCoin.getLogic_x(),nearestCoin.getLogic_y());
 	}
 }

@@ -1,19 +1,27 @@
 package it.unical.game;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
+import it.unical.inputobject.PacmanDLV;
 import it.unical.mat.embasp.base.Handler;
 import it.unical.mat.embasp.base.InputProgram;
+import it.unical.mat.embasp.base.Output;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
+import it.unical.mat.embasp.languages.asp.AnswerSet;
+import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.specializations.dlv2.DLV2AnswerSets;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 import it.unical.object.Coin;
 import it.unical.object.Ghost;
 import it.unical.object.PacMan;
+import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 import com.badlogic.gdx.Screen;
@@ -24,6 +32,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.CharArray;
@@ -38,7 +47,7 @@ public class GameScreen implements Screen {
 	
 	//EmbASP integration
 	private static Handler handler;
-	private static String encondingPath="/encodings/CryptoPacman/";
+	private static String encondingPath="encodings/CryptoPacman/";
 	private static String encondingName="raccogliMonete";
 	private InputProgram facts;
 	private InputProgram encoding;
@@ -72,7 +81,7 @@ public class GameScreen implements Screen {
 		parameterPoint.color = Color.LIGHT_GRAY;
 		fontPoint= generator1.generateFont(parameterPoint);
 		
-		handler=new DesktopHandler(new DLV2DesktopService("idlv2"));
+		handler=new DesktopHandler(new DLV2DesktopService("dlv2"));
 		facts=new ASPInputProgram();
 		encoding=new ASPInputProgram();;
 	}
@@ -98,12 +107,41 @@ public class GameScreen implements Screen {
 				if(!world.getPacman().hasMoreSteps()) {
 					//valutare se aggiungere programma dlv che dicide quale programma lanciare	
 					encondingName=world.getOptimalProgram();
+					encondingName="raccogliMonete";
 					encoding=new ASPInputProgram();
+					System.out.println(encondingPath+encondingName);
+					//encoding.addFilesPath(encondingPath+"utility.py");
+					facts=world.getInputFacts(encondingName);
 					encoding.addFilesPath(encondingPath+encondingName);
-					encoding.addFilesPath(encondingPath+"utility.py");
-					facts=world.getInputFacts();
-					encoding.addProgram(facts);
+					handler.addProgram(encoding);
+					Output output=handler.startSync();
+					AnswerSets answerSets=(AnswerSets)output;
+					ArrayList<Position> steps=new ArrayList<>(3);
+					for(AnswerSet answerSet : answerSets.getAnswersets()) {
+						try {
+							for(Object obj : answerSet.getAtoms()) {
+								if(obj instanceof PacmanDLV) {
+									PacmanDLV step=(PacmanDLV)obj;
+									if(step.getT()>0) {
+										System.out.println(step.getT()+" "+step.getX()+" "+step.getY());
+										steps.set(step.getT(), new Position(step.getX(),step.getY()));
+									}
+								}
+							}
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+								| NoSuchMethodException | SecurityException | InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						world.getPacman().getSteps().addAll(steps);
+						break;
+					}
 				}
+			}
+			if(world.getPacman().getInter_box()==0) {
+				Position nextStep=world.getPacman().getSteps().remove(0);
+				Position pacmanPosition=new Position(world.getPacman().getLogic_x(),world.getPacman().getLogic_y());
+				world.updatePlayerNextDirection(new Vector2(nextStep.getX()-pacmanPosition.getX(), nextStep.getY()-pacmanPosition.getY()));
 			}
 			isDied = world.checkPlayerDied();
 			world.updateEnemy(delta);

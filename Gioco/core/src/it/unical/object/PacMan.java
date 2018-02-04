@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.utils.CharArray;
 
 import it.unical.game.PacManWorld;
 import it.unical.provaIA.Position;
@@ -194,6 +195,12 @@ public class PacMan {
 	public boolean hasMoreSteps() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+
+	public ArrayList<Position> getSteps() {
+		// TODO Auto-generated method stub
+		return nextSteps;
 	}
 
 }

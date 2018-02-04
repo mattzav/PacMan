@@ -102,6 +102,21 @@ public class PacMan {
 	}
 
 	public void update(int[][] is_crossable, float delta) {
+		if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
+			logic_y = 0;
+		} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
+			logic_y = 18;
+		} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
+				+ next_direction.y)] == Constant.WALL) {
+			if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
+			} else {
+				next_direction.x = 0;
+				next_direction.y = 0;
+				direction.x = 0;
+				direction.y = 0;
+			}
+		} else
+			setDirection(next_direction);
 		if (!is_died) {
 			animation += 0.1;
 			animation %= 2;
@@ -116,7 +131,9 @@ public class PacMan {
 		}
 		if (direction.x == 0 && direction.y == 0)
 			return;
+		
 		inter_box += 2 * delta * 40;
+
 		if (inter_box >= Constant.box_size + 2) {
 
 			logic_x += direction.x;
@@ -136,23 +153,8 @@ public class PacMan {
 				world.remove_coin(logic_x, logic_y);
 				Constant.pacman_pick_money.play();
 			}
-			inter_box = 0;
+			inter_box = 0.f;
 			
-			if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
-				logic_y = 0;
-			} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
-				logic_y = 18;
-			} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
-					+ next_direction.y)] == Constant.WALL) {
-				if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
-				} else {
-					next_direction.x = 0;
-					next_direction.y = 0;
-					direction.x = 0;
-					direction.y = 0;
-				}
-			} else
-				setDirection(next_direction);
 
 		}
 
@@ -193,8 +195,7 @@ public class PacMan {
 
 
 	public boolean hasMoreSteps() {
-		// TODO Auto-generated method stub
-		return false;
+		return !nextSteps.isEmpty();
 	}
 
 

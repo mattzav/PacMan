@@ -177,7 +177,8 @@ public class Ghost {
 
 		// se non � fermo aggiorno la posizione
 		if (!(direction.x == 0 && direction.y == 0)) {
-			inter_box += 1.5 * delta * speed * 40;
+//			inter_box += 1.5 * delta * speed * 40;
+			inter_box += 1.5 * delta * speed * 4;
 			
 			//se � arrivato alla casella successiva lo fermo
 			if (inter_box >= Constant.box_size + 1) {

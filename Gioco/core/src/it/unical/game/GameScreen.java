@@ -1,5 +1,7 @@
 package it.unical.game;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
@@ -7,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 
 import it.unical.inputobject.PacmanDLV;
 import it.unical.mat.embasp.base.Handler;
@@ -44,13 +47,12 @@ public class GameScreen implements Screen {
 	private int loading = 0;
 	private boolean isDied;
 	private int loading_dead = 0;
-	
-	//EmbASP integration
+
+	// EmbASP integration
 	private static Handler handler;
-	private static String encondingPath="encodings/CryptoPacman/";
-	private static String encondingName="raccogliMonete";
+	private static String encondingPath = "encodings/";
+	private static String encondingName = "raccogliMonete";
 	private InputProgram facts;
-	private InputProgram encoding;
 
 	// disegnare
 	private SpriteBatch batch;
@@ -63,10 +65,10 @@ public class GameScreen implements Screen {
 	private BitmapFont fontPoint;
 	private boolean aiPlays;
 
-	public GameScreen(PacManGame game,boolean aiPlays) {
-		
+	public GameScreen(PacManGame game, boolean aiPlays) {
+
 		this.game = game;
-		this.aiPlays=aiPlays;
+		this.aiPlays = aiPlays;
 		batch = new SpriteBatch();
 		world = new PacManWorld(1);
 		isDied = false;
@@ -75,15 +77,13 @@ public class GameScreen implements Screen {
 		parameterTitle = new FreeTypeFontParameter();
 		parameterPoint = new FreeTypeFontParameter();
 		parameterTitle.size = 40;
-		parameterTitle.color= Color.YELLOW;
+		parameterTitle.color = Color.YELLOW;
 		fontTitle = generator2.generateFont(parameterTitle);
 		parameterPoint.size = 24;
 		parameterPoint.color = Color.LIGHT_GRAY;
-		fontPoint= generator1.generateFont(parameterPoint);
-		
-		handler=new DesktopHandler(new DLV2DesktopService("dlv2"));
-		facts=new ASPInputProgram();
-		encoding=new ASPInputProgram();;
+		fontPoint = generator1.generateFont(parameterPoint);
+
+		handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
 		world.updatePlayer(delta);
 		if (!isDied) {
-			if(!aiPlays) {
+			if (!aiPlays) {
 				if (Gdx.input.isKeyJustPressed(Keys.UP))
 					world.updatePlayerNextDirection(Constant.UP);
 				else if (Gdx.input.isKeyJustPressed(Keys.DOWN))
@@ -103,28 +103,34 @@ public class GameScreen implements Screen {
 					world.updatePlayerNextDirection(Constant.SX);
 				else if (Gdx.input.isKeyJustPressed(Keys.RIGHT))
 					world.updatePlayerNextDirection(Constant.DX);
-			}else {
-				if(!world.getPacman().hasMoreSteps()) {
-					//valutare se aggiungere programma dlv che dicide quale programma lanciare	
-					encondingName=world.getOptimalProgram();
-					encondingName="raccogliMonete";
-					encoding=new ASPInputProgram();
-					System.out.println(encondingPath+encondingName);
-					//encoding.addFilesPath(encondingPath+"utility.py");
-					facts=world.getInputFacts(encondingName);
-					encoding.addFilesPath(encondingPath+encondingName);
+			} else {
+				if (!world.getPacman().hasMoreSteps() && world.getPacman().getInter_box() == 0.f) {
+
+					// valutare se aggiungere programma dlv che dicide quale programma lanciare
+					// encondingName=world.getOptimalProgram();
+					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
+
+					facts = world.getInputFacts(encondingName);
+					handler.addProgram(facts);
+
+					InputProgram encoding = new ASPInputProgram();
+					encoding.addFilesPath("encodings/raccogliMonete");
 					handler.addProgram(encoding);
-					Output output=handler.startSync();
-					AnswerSets answerSets=(AnswerSets)output;
-					ArrayList<Position> steps=new ArrayList<>(3);
-					for(AnswerSet answerSet : answerSets.getAnswersets()) {
+					
+					Output output = handler.startSync();
+					AnswerSets answerSets = (AnswerSets) output;
+					ArrayList<Position> steps = new ArrayList<>(3);
+					steps.add(0, null);
+					steps.add(1, null);
+					steps.add(2, null);
+					for (AnswerSet answerSet : answerSets.getAnswersets()) {
+						System.out.println("djfdsfi");
 						try {
-							for(Object obj : answerSet.getAtoms()) {
-								if(obj instanceof PacmanDLV) {
-									PacmanDLV step=(PacmanDLV)obj;
-									if(step.getT()>0) {
-										System.out.println(step.getT()+" "+step.getX()+" "+step.getY());
-										steps.set(step.getT(), new Position(step.getX(),step.getY()));
+							for (Object obj : answerSet.getAtoms()) {
+								if (obj instanceof PacmanDLV) {
+									PacmanDLV step = (PacmanDLV) obj;
+									if (step.getT() > 0) {
+										steps.set(step.getT() - 1, new Position(step.getX(), step.getY()));
 									}
 								}
 							}
@@ -138,10 +144,13 @@ public class GameScreen implements Screen {
 					}
 				}
 			}
-			if(world.getPacman().getInter_box()==0) {
-				Position nextStep=world.getPacman().getSteps().remove(0);
-				Position pacmanPosition=new Position(world.getPacman().getLogic_x(),world.getPacman().getLogic_y());
-				world.updatePlayerNextDirection(new Vector2(nextStep.getX()-pacmanPosition.getX(), nextStep.getY()-pacmanPosition.getY()));
+			if (world.getPacman().getInter_box() == 0 && !world.getPacman().getSteps().isEmpty()) {
+
+				Position nextStep = world.getPacman().getSteps().remove(0);
+				Position pacmanPosition = new Position(world.getPacman().getLogic_x(), world.getPacman().getLogic_y());
+				System.out.println(nextStep.getX() + " " + nextStep.getY());
+				world.updatePlayerNextDirection(
+						new Vector2(nextStep.getX() - pacmanPosition.getX(), nextStep.getY() - pacmanPosition.getY()));
 			}
 			isDied = world.checkPlayerDied();
 			world.updateEnemy(delta);
@@ -179,7 +188,7 @@ public class GameScreen implements Screen {
 					ghost.getLogic_y() * Constant.box_size + ghost.getInter_box() * ghost.getDirection().y,
 					400 - ghost.getLogic_x() * Constant.box_size - ghost.getInter_box() * ghost.getDirection().x);
 		fontPoint.draw(batch, "PUNTI:", 400, 425);
-		fontPoint.draw(batch,String.valueOf(world.getPoint()),420,395);
+		fontPoint.draw(batch, String.valueOf(world.getPoint()), 420, 395);
 		batch.end();
 	}
 

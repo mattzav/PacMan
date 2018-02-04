@@ -8,6 +8,7 @@ import it.unical.inputobject.Casella;
 import it.unical.inputobject.Moneta;
 import it.unical.inputobject.NemicoVicino;
 import it.unical.inputobject.Pacman;
+import it.unical.inputobject.PacmanDLV;
 import it.unical.inputobject.raccoglimonete.MonetaVicina;
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
@@ -35,10 +36,10 @@ public class PacManWorld {
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = 0;
 		int speed_ghost = 1 + Math.abs((level - 1)) / 10;
-		this.ghosts.add(new Ghost(11, 12, 3, speed_ghost));
-		this.ghosts.add(new Ghost(16, 12, 1, speed_ghost));
-		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
-		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
+		this.ghosts.add(new Ghost(17, 16, 3, speed_ghost));
+//		this.ghosts.add(new Ghost(16, 12, 1, speed_ghost));
+//		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
+//		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
 		this.level = level;
 
 		this.coins = new ArrayList<Coin>();
@@ -292,7 +293,7 @@ public class PacManWorld {
 			if (ghost.getLogic_x() == pacman.getLogic_x() && ghost.getLogic_y() == pacman.getLogic_y()) {
 				if (pacman.isSpecial()) {
 					died.add(ghost);
-					point+=300;
+					point += 300;
 					Constant.ghost_died.play();
 				} else {
 					pacman.setDied();
@@ -314,7 +315,7 @@ public class PacManWorld {
 	}
 
 	public void pacmanPicked(int COIN) {
-		point+=COIN*50;
+		point += COIN * 50;
 	}
 
 	public int getPoint() {
@@ -327,24 +328,26 @@ public class PacManWorld {
 	}
 
 	public InputProgram getInputFacts(String program) {
-		
-		InputProgram returnValue=new ASPInputProgram();
+
+		InputProgram returnValue = new ASPInputProgram();
 		try {
-			if(program.equals("raccogliMonete")) {
-				
-				for (int i = 0; i < is_crossable.length; i++) 
-					for (int j = 0; j < is_crossable[i].length; j++) 
-						if(is_crossable[i][j]==Constant.FREE)
+			if (program.equals("raccogliMonete")) {
+				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
+				for (int i = 0; i < is_crossable.length; i++)
+					for (int j = 0; j < is_crossable[i].length; j++) {
+						if (is_crossable[i][j] == Constant.COIN)
+							returnValue.addObjectInput(new Moneta(i, j, "normale"));
+						else if (is_crossable[i][j] == Constant.SPECIALCOIN)
+							returnValue.addObjectInput(new Moneta(i, j, "speciale"));
+						if (is_crossable[i][j] != Constant.WALL)
 							returnValue.addObjectInput(new Casella(i, j));
-						else if(is_crossable[i][j]==Constant.COIN)
-							returnValue.addObjectInput(new Moneta(i, j,"normale") );
-						else if(is_crossable[i][j]==Constant.SPECIALCOIN)
-							returnValue.addObjectInput(new Moneta(i, j,"speciale") );
-					returnValue.addObjectInput(new Pacman(pacman.getLogic_x(),pacman.getLogic_y()));
-					returnValue.addObjectInput(nearestCoin());
-					returnValue.addObjectInput(nearestEnemy());
+					}
+				returnValue.addObjectInput(nearestCoin());
+				returnValue.addObjectInput(nearestEnemy());
 			}
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -352,29 +355,31 @@ public class PacManWorld {
 	}
 
 	private NemicoVicino nearestEnemy() {
-		int minDist=Integer.MAX_VALUE;
-		Ghost nearestEnemy=null;
-		for(Ghost ghost: ghosts) {
-			int dist=Constant.distanza(new Position(ghost.getLogic_x(),ghost.getLogic_y()), new Position(pacman.getLogic_x(),pacman.getLogic_y()));
-			if(dist<minDist) {
-				minDist=dist;
-				nearestEnemy=ghost;
+		int minDist = Integer.MAX_VALUE;
+		Ghost nearestEnemy = null;
+		for (Ghost ghost : ghosts) {
+			int dist = Constant.distanza(new Position(ghost.getLogic_x(), ghost.getLogic_y()),
+					new Position(pacman.getLogic_x(), pacman.getLogic_y()));
+			if (dist < minDist) {
+				minDist = dist;
+				nearestEnemy = ghost;
 			}
 		}
-		return new NemicoVicino(nearestEnemy.getLogic_x(),nearestEnemy.getLogic_y());
+		return new NemicoVicino(nearestEnemy.getLogic_x(), nearestEnemy.getLogic_y());
 	}
 
 	private MonetaVicina nearestCoin() {
-		
-		int minDist=Integer.MAX_VALUE;
-		Coin nearestCoin=null;
-		for(Coin coin: coins) {
-			int dist=Constant.distanza(new Position(coin.getLogic_x(),coin.getLogic_y()), new Position(pacman.getLogic_x(),pacman.getLogic_y()));
-			if(dist<minDist && !coin.isSpecialCoin()) {
-				minDist=dist;
-				nearestCoin=coin;
+
+		int minDist = Integer.MAX_VALUE;
+		Coin nearestCoin = null;
+		for (Coin coin : coins) {
+			int dist = Constant.distanza(new Position(coin.getLogic_x(), coin.getLogic_y()),
+					new Position(pacman.getLogic_x(), pacman.getLogic_y()));
+			if (dist < minDist && !coin.isSpecialCoin()) {
+				minDist = dist;
+				nearestCoin = coin;
 			}
 		}
-		return new MonetaVicina(nearestCoin.getLogic_x(),nearestCoin.getLogic_y());
+		return new MonetaVicina(nearestCoin.getLogic_x(), nearestCoin.getLogic_y());
 	}
 }

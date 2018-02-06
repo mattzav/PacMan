@@ -1,0 +1,31 @@
+%casella(X,Y).
+%moneta(X,Y,Tipo).
+%pacman(X,Y).
+%nemicoPiuVicino(X,Y).
+%numeroMosseMassimo(X).
+
+%Guess sulle mosee possibili
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),numeroMosseMassimo(K),T<K,not raggiunto(T).
+
+%vincolo nemico raggiunto
+raggiuntoNemico :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).
+:- not raggiuntoNemico.
+
+%pago per quanto impiego a raggiungerlo
+raggiunto(T) :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).
+:~ raggiunto(T). [T@3]
+
+%vincolo mossa consentita
+:- up(T),pacmanDLV(T,X,Y),not casella(X-1,Y).
+:- down(T),pacmanDLV(T,X,Y),not casella(X+1,Y).
+:- left(T),pacmanDLV(T,X,Y),not casella(X,Y-1).
+:- right(T),pacmanDLV(T,X,Y),not casella(X,Y+1).
+
+%aggiorna posizione pacman
+pacmanDLV(T+1,X-1,Y):-up(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
+
+:~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@2,T,X,Y]
+:~ pacmanDLV(T,X,Y), not moneta(X,Y,"speciale"). [1@1,T,X,Y]

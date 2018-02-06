@@ -23,7 +23,7 @@ public class StartScreen implements Screen{
 	private Stage stage;
 	
 	public StartScreen(final PacManGame game) {
-//		Constant.intro.play();
+		Constant.intro.play();
 		this.game=game;
 		batch = new SpriteBatch();
 		
@@ -35,11 +35,23 @@ public class StartScreen implements Screen{
 		Button start= new TextButton("Start", Constant.skin);
 		start.setColor(Color.RED);
 		start.setPosition(210, 205);
+		start.addListener(new ChangeListener() {
+			@Override
+			public void changed (ChangeEvent event, Actor actor) {
+				game.swap(Constant.GAMESTATE);
+			}
+		});
 	
 		
 		TextButton settings= new TextButton("Settings", Constant.skin);
 		settings.setColor(Color.RED);
 		settings.setPosition(190, 105);
+		settings.addListener(new ChangeListener() {
+	        @Override
+	        public void changed (ChangeEvent event, Actor actor) {
+	            game.swap(Constant.SETTINGSTATE);
+	        }
+	    });
 		
 		TextButton info= new TextButton( "Info", Constant.skin);
 		info.setColor(Color.RED);
@@ -47,22 +59,14 @@ public class StartScreen implements Screen{
 		
 		stage = new Stage();
 		stage.addActor(mainTable);
-		System.out.println("ci");
-		start.addListener(new ChangeListener() {
-		        @Override
-		        public void changed (ChangeEvent event, Actor actor) {
-		            game.swap(Constant.GAMESTATE);
-		        }
-		    });
 		mainTable.add(start);
 		mainTable.add(settings);
 		mainTable.add(info);
-        Gdx.input.setInputProcessor(stage); //Start taking input from the ui
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+        Gdx.input.setInputProcessor(stage); //Start taking input from the ui
 		
 	}
 

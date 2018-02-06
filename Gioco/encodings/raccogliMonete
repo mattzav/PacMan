@@ -32,4 +32,3 @@ nonDoveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,"norm
 
 % qualora non è riuscito fino al tempo 3 a raccogliere almeno una moneta, paga la distanza dalla moneta più vicina in modo da minimizzarla.
 %:~ #count{R,C : raccoltaMonetaNormale(3,R,C)}=0, monetaPiuVicina(X1,Y1),pacmanDLV(3,X2,Y2),&distanza(X2,Y2,X1,Y1;D1). [D1@2]
-

@@ -112,9 +112,9 @@ public class GameScreen implements Screen {
 
 					facts = world.getInputFacts(encondingName);
 					handler.addProgram(facts);
-
+						
 					InputProgram encoding = new ASPInputProgram();
-					encoding.addFilesPath("encodings/raccogliMonete");
+					encoding.addFilesPath(Gdx.files.internal("encodings/raccogliMonete").path());
 					handler.addProgram(encoding);
 					
 					Output output = handler.startSync();

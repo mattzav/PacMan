@@ -1,0 +1,55 @@
+%casella(X,Y).
+%moneta(X,Y,Tipo,Peso).
+%pacman(X,Y).
+%nemico(ID,Peso,X,Y).
+%distanza(T,ID,Distanza).
+%distanzaFisica(X,Y,X1,Y1,D).
+
+
+
+
+%posizione iniziale
+pacmanDLV(0,X,Y):-pacman(X,Y).
+
+%Guess sulle mosee possibili
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<3.
+
+%vincolo mossa consentita
+:- up(T),pacmanDLV(T,X,Y),not casella(X-1,Y).
+:- down(T),pacmanDLV(T,X,Y),not casella(X+1,Y).
+:- left(T),pacmanDLV(T,X,Y),not casella(X,Y-1).
+:- right(T),pacmanDLV(T,X,Y),not casella(X,Y+1).
+
+%aggiorna posizione pacman
+pacmanDLV(T+1,X-1,Y):-up(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
+pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
+
+%aggiorna distanze al l'istante T
+distanza(T,ID,D):-pacmanDLV(T,X,Y),nemico(ID,_,X1,Y1),&calcolaDistanza(X,Y,X1,Y1:D).
+
+%massimizza la distanza dal nemico più vicino
+:~distanza(T,ID,D),distanza(T-1,ID,D1),D<D1,nemico(ID,P,_,_). [1@P,ID,T]
+
+%calcola il range di caselle che descrivono un intorno
+intorno(X,Y,X1,Y1):-casella(X,Y),casella(X1,Y1), X1>=X-2, X1<=X+2,Y1>=Y-2, Y1<=Y+2.
+
+%si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
+urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),intorno(X,Y,X1,Y1)}>2.
+
+%cerco di raggiungere la moneta speciale se ho urgenza
+:~urgenza(T),moneta(R,C,speciale,P),pacmanDLV(T,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(T+1,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [1@P,T,R,C] %1 perchè mi muovo al più di una mossa
+
+%su un livello minore cerco di avvicinarmi a qualche moneta normale
+:~moneta(R,C,normale,P),pacmanDLV(0,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(3,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [D1-D@P,R,C]
+
+%massimizzo il numero di monete raccolte
+pesoMax(L):-L=#max{P: moneta(X,Y,normale,P)}.
+monetaRaccolta(X,Y):-moneta(X,Y,normale,_),pacmanDLV(_,X,Y).
+:-moneta(X,Y,normale,_),not monetaRaccolta(X,Y),pesoMax(L). [1@L+1,X,Y]
+%pesi 
+%nemici -> livello maggiore
+%moneteSpeciali -> livello medio
+%moneteRaccolte > monete vicine
+%monete Vicine pesi pù bassi

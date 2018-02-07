@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 
 import it.unical.inputobject.Casella;
+import it.unical.inputobject.CeNemico;
 import it.unical.inputobject.Moneta;
 import it.unical.inputobject.NemicoVicino;
+import it.unical.inputobject.NumeroMosseMassimo;
 import it.unical.inputobject.Pacman;
 import it.unical.inputobject.PacmanDLV;
 import it.unical.inputobject.raccoglimonete.MonetaVicina;
@@ -36,10 +38,10 @@ public class PacManWorld {
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = 0;
 		int speed_ghost = 1 + Math.abs((level - 1)) / 10;
-		this.ghosts.add(new Ghost(17, 16, 3, speed_ghost));
-//		this.ghosts.add(new Ghost(16, 12, 1, speed_ghost));
-//		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
-//		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
+		this.ghosts.add(new Ghost(10, 10, 3, speed_ghost));
+		this.ghosts.add(new Ghost(14, 12, 1, speed_ghost));
+		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
+		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
 		this.level = level;
 
 		this.coins = new ArrayList<Coin>();
@@ -219,6 +221,7 @@ public class PacManWorld {
 					coins.add(new Coin(i, j, false));
 				}
 
+		
 		is_crossable[3][1] = Constant.SPECIALCOIN;
 		coins.add(new Coin(3, 1, true));
 
@@ -323,8 +326,9 @@ public class PacManWorld {
 	}
 
 	public String getOptimalProgram() {
-		// TODO Auto-generated method stub
-		return null;
+		if (pacman.isSpecial() && !ghosts.isEmpty())
+			return "inseguiNemico";
+		return "raccogliMonete";
 	}
 
 	public InputProgram getInputFacts(String program) {
@@ -343,7 +347,32 @@ public class PacManWorld {
 							returnValue.addObjectInput(new Casella(i, j));
 					}
 				returnValue.addObjectInput(nearestCoin());
-				returnValue.addObjectInput(nearestEnemy());
+				NemicoVicino nearestEnemy = nearestEnemy();
+				
+				if (nearestEnemy != null)
+					returnValue.addObjectInput(nearestEnemy);
+				
+				if(!ghosts.isEmpty())
+					returnValue.addObjectInput(new CeNemico());
+				
+			} else if (program.equals("inseguiNemico")) {
+				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
+				for (int i = 0; i < is_crossable.length; i++)
+					for (int j = 0; j < is_crossable[i].length; j++) {
+						if (is_crossable[i][j] == Constant.COIN)
+							returnValue.addObjectInput(new Moneta(i, j, "normale"));
+						else if (is_crossable[i][j] == Constant.SPECIALCOIN)
+							returnValue.addObjectInput(new Moneta(i, j, "speciale"));
+						if (is_crossable[i][j] != Constant.WALL)
+							returnValue.addObjectInput(new Casella(i, j));
+					}
+				NemicoVicino nearestEnemy = nearestEnemy();
+				if (nearestEnemy != null) {
+					returnValue.addObjectInput(nearestEnemy);
+					returnValue.addObjectInput(new NumeroMosseMassimo(
+							10 + Constant.distanza(new Position(nearestEnemy.getX(), nearestEnemy.getY()),
+									new Position(pacman.getLogic_x(), pacman.getLogic_y()))));
+				}
 			}
 		} catch (
 
@@ -365,7 +394,9 @@ public class PacManWorld {
 				nearestEnemy = ghost;
 			}
 		}
-		return new NemicoVicino(nearestEnemy.getLogic_x(), nearestEnemy.getLogic_y());
+		if (nearestEnemy != null)
+			return new NemicoVicino(nearestEnemy.getLogic_x(), nearestEnemy.getLogic_y());
+		return null;
 	}
 
 	private MonetaVicina nearestCoin() {

@@ -74,6 +74,8 @@ public class Constant {
 
 	public static int MENUSTATE = 0;
 	public static int GAMESTATE = 1;
+	public static int SETTINGSTATE = 2;
+	
 
 	public static Vector2[] corners = { new Vector2(1, 1), new Vector2(1, 17), new Vector2(19, 1),
 			new Vector2(19, 17) };

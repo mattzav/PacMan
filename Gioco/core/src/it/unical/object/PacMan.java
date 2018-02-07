@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.CharArray;
 
+import it.unical.game.GameScreen;
 import it.unical.game.PacManWorld;
 import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
@@ -26,8 +27,8 @@ public class PacMan {
 	private float animation;
 	private PacManWorld world;
 
-	ArrayList<Position> nextSteps; 
-	
+	ArrayList<Position> nextSteps;
+
 	public PacMan(int logic_x, int logic_y, PacManWorld world) {
 		this.isSpecial = false;
 		this.startTimeSpecial = 0;
@@ -39,9 +40,8 @@ public class PacMan {
 		is_died = false;
 		direction = new Vector2(0, 0);
 		this.world = world;
-		nextSteps= new ArrayList<>();
+		nextSteps = new ArrayList<>();
 	}
-
 
 	public long getStartTimeSpecial() {
 		return startTimeSpecial;
@@ -102,21 +102,23 @@ public class PacMan {
 	}
 
 	public void update(int[][] is_crossable, float delta) {
-		if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
-			logic_y = 0;
-		} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
-			logic_y = 18;
-		} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
-				+ next_direction.y)] == Constant.WALL) {
-			if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
-			} else {
-				next_direction.x = 0;
-				next_direction.y = 0;
-				direction.x = 0;
-				direction.y = 0;
-			}
-		} else
-			setDirection(next_direction);
+		if (GameScreen.aiPlays) {
+			if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
+				logic_y = 0;
+			} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
+				logic_y = 18;
+			} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
+					+ next_direction.y)] == Constant.WALL) {
+				if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
+				} else {
+					next_direction.x = 0;
+					next_direction.y = 0;
+					direction.x = 0;
+					direction.y = 0;
+				}
+			} else
+				setDirection(next_direction);
+		}
 		if (!is_died) {
 			animation += 0.1;
 			animation %= 2;
@@ -131,7 +133,7 @@ public class PacMan {
 		}
 		if (direction.x == 0 && direction.y == 0)
 			return;
-		
+
 		inter_box += 2 * delta * 40;
 
 		if (inter_box >= Constant.box_size + 2) {
@@ -154,8 +156,24 @@ public class PacMan {
 				Constant.pacman_pick_money.play();
 			}
 			inter_box = 0.f;
-			
 
+			if (!GameScreen.aiPlays) {
+				if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
+					logic_y = 0;
+				} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
+					logic_y = 18;
+				} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
+						+ next_direction.y)] == Constant.WALL) {
+					if (is_crossable[(int) (logic_x + direction.x)][(int) (logic_y + direction.y)] != Constant.WALL) {
+					} else {
+						next_direction.x = 0;
+						next_direction.y = 0;
+						direction.x = 0;
+						direction.y = 0;
+					}
+				} else
+					setDirection(next_direction);
+			}
 		}
 
 	}
@@ -193,11 +211,9 @@ public class PacMan {
 		this.is_died = true;
 	}
 
-
 	public boolean hasMoreSteps() {
 		return !nextSteps.isEmpty();
 	}
-
 
 	public ArrayList<Position> getSteps() {
 		// TODO Auto-generated method stub

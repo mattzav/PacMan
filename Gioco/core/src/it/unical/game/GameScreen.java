@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 
+import it.unical.inputobject.CeNemico;
 import it.unical.inputobject.PacmanDLV;
 import it.unical.mat.embasp.base.Handler;
 import it.unical.mat.embasp.base.InputProgram;
@@ -53,7 +54,8 @@ public class GameScreen implements Screen {
 	private static String encondingPath = "encodings/";
 	private static String encondingName = "raccogliMonete";
 	private InputProgram facts;
-
+	private InputProgram encoding;
+	
 	// disegnare
 	private SpriteBatch batch;
 	private int cont = 0;
@@ -63,7 +65,7 @@ public class GameScreen implements Screen {
 	private FreeTypeFontParameter parameterPoint;
 	private BitmapFont fontTitle;
 	private BitmapFont fontPoint;
-	private boolean aiPlays;
+	public static boolean aiPlays;
 
 	public GameScreen(PacManGame game, boolean aiPlays) {
 
@@ -107,29 +109,35 @@ public class GameScreen implements Screen {
 				if (!world.getPacman().hasMoreSteps() && world.getPacman().getInter_box() == 0.f) {
 
 					// valutare se aggiungere programma dlv che dicide quale programma lanciare
-					// encondingName=world.getOptimalProgram();
+					encondingName = world.getOptimalProgram();
 					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
 
 					facts = world.getInputFacts(encondingName);
 					handler.addProgram(facts);
-						
-					InputProgram encoding = new ASPInputProgram();
-					encoding.addFilesPath(Gdx.files.internal("encodings/raccogliMonete").path());
+
+					encoding = new ASPInputProgram();
+					encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
 					handler.addProgram(encoding);
-					
+
 					Output output = handler.startSync();
 					AnswerSets answerSets = (AnswerSets) output;
-					ArrayList<Position> steps = new ArrayList<>(3);
+					ArrayList<Position> steps = new ArrayList<>();
 					steps.add(0, null);
 					steps.add(1, null);
 					steps.add(2, null);
+					steps.add(3, null);
+					steps.add(4, null);
+					steps.add(5, null);
+					steps.add(6, null);
+
 					for (AnswerSet answerSet : answerSets.getAnswersets()) {
-						System.out.println("djfdsfi");
 						try {
 							for (Object obj : answerSet.getAtoms()) {
+								if (obj instanceof CeNemico)
+									System.out.println("NEMICO");
 								if (obj instanceof PacmanDLV) {
 									PacmanDLV step = (PacmanDLV) obj;
-									if (step.getT() > 0) {
+									if (step.getT() > 0 && step.getT() < 8) {
 										steps.set(step.getT() - 1, new Position(step.getX(), step.getY()));
 									}
 								}
@@ -143,19 +151,24 @@ public class GameScreen implements Screen {
 						break;
 					}
 				}
-			}
-			if (world.getPacman().getInter_box() == 0 && !world.getPacman().getSteps().isEmpty()) {
+				if (world.getPacman().getInter_box() == 0 && !world.getPacman().getSteps().isEmpty()) {
 
-				Position nextStep = world.getPacman().getSteps().remove(0);
-				Position pacmanPosition = new Position(world.getPacman().getLogic_x(), world.getPacman().getLogic_y());
-				System.out.println(nextStep.getX() + " " + nextStep.getY());
-				world.updatePlayerNextDirection(
-						new Vector2(nextStep.getX() - pacmanPosition.getX(), nextStep.getY() - pacmanPosition.getY()));
+					ArrayList<Position> pacmanSteps = world.getPacman().getSteps();
+					Position nextStep = pacmanSteps.remove(0);
+					while (nextStep == null && !pacmanSteps.isEmpty())
+						nextStep = pacmanSteps.remove(0);
+					if (nextStep != null) {
+						Position pacmanPosition = new Position(world.getPacman().getLogic_x(),
+								world.getPacman().getLogic_y());
+						System.out.println(nextStep.getX() + " " + nextStep.getY());
+						world.updatePlayerNextDirection(new Vector2(nextStep.getX() - pacmanPosition.getX(),
+								nextStep.getY() - pacmanPosition.getY()));
+					}
+				}
 			}
 			isDied = world.checkPlayerDied();
 			world.updateEnemy(delta);
 		}
-
 		if (isDied) {
 			loading_dead++;
 		}
@@ -220,6 +233,11 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void setAIPlays(boolean aiPlays2) {
+
+		this.aiPlays = aiPlays2;
 	}
 
 }

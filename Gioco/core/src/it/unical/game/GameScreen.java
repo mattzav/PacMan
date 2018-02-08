@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
 					Output output = handler.startSync();
 					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
-					ArrayList<Position> steps = new ArrayList();
+					ArrayList<Position> steps = new ArrayList<>();
 					steps.add(0, null);
 					steps.add(1, null);
 					steps.add(2, null);

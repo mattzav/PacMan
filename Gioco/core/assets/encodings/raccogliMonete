@@ -3,7 +3,7 @@
 %pacman(X,Y).
 %monetaVicina(X,Y). aggiungere controllo per avvicinarsi alla più vicina
 
-%Guess sulle mosee possibili
+%Guess sulle mosse possibili
 up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<7.
 
 %vincolo mossa consentita
@@ -18,22 +18,46 @@ pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
 
+% aggiornamento delle monete raccolte
 raccoltaMonetaNormale(T,X,Y):- pacmanDLV(T,X,Y),moneta(X,Y,"normale").
 raccoltaMonetaNormale(T+1,X,Y):-raccoltaMonetaNormale(T,X,Y),T<7.
 
-:~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@4,T,X,Y]
-:~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@4,T,X,Y]
+%calcolo moneta isolata
+monetaIsolata(X1,Y1):- moneta(X1,Y1,"normale"),#count{X,Y : moneta(X,Y,"normale"),X>=X1-2,Y>=Y1-2,X<=X1+2,Y<=Y1+2}=1.
 
+%controllo per prendere le monete isolate.
+:~pacmanDLV(T,X,Y),not monetaIsolata(X,Y). [1@6,T,X,Y]
+
+%pago se non raccolgo monete normali.
+:~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@5,T,X,Y]
+:~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@5,T,X,Y]
+
+%salvo il primo istante in cui ho raccolto una moneta
+raccoltaIstante(T1,X,Y):- #min{T:pacmanDLV(T,X,Y)}=T1,moneta(X,Y,"normale"),pacmanDLV(_,X,Y).
+
+%pago l'istante in cui ho raccolto una moneta
+:~raccoltaIstante(T,X,Y). [T@4,X,Y]
+
+% dovevo raccogliere una monete speciale se intorno ci sono 0 monete normali
 doveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,"normale"),not raccoltaMonetaNormale(T-1,X,Y),X>=X1-1,Y>=Y1-1,X<=X1+1,Y<=Y1+1}=0, not moneta(X1,Y1,"speciale"). 
 :~doveviRaccogliere(T,X1,Y1). [1@3,T,X1,Y1] 
+
+%non dovevo raccogliere una moneta speciale se intorno c'è almeno una moneta normale
 nonDoveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,"normale"),not raccoltaMonetaNormale(T-1,X,Y),X>=X1-1,Y>=Y1-1,X<=X1+1,Y<=Y1+1}>0, moneta(X1,Y1,"speciale"). 
 :~nonDoveviRaccogliere(T,X1,Y1).[1@3,T,X1,Y1] 
 
+
+%calcolo la distanza finale dalla moneta più vicina
 distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
 distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
 distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
+% se non raccolgo alcuna moneta, minimizzo la distanza dalla più vicina
 :~ #count{R,C : raccoltaMonetaNormale(7,R,C)}=0,distanza(D). [D@2]
+
 % qualora non è riuscito fino al tempo 3 a raccogliere almeno una moneta, paga la distanza dalla moneta più vicina in modo da minimizzarla.
 %:~ #count{R,C : raccoltaMonetaNormale(7,R,C)}=0, monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),&distanza(X2,Y2,X1,Y1;D1). [D1@2]
+
+%controllo per non andare molte volte sulla stessa casella
+:~pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T!=T1. [1@1,T]

@@ -11,8 +11,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 
-import it.unical.inputobject.CeNemico;
 import it.unical.inputobject.PacmanDLV;
+import it.unical.inputobject.RaccoltaIstante;
 import it.unical.mat.embasp.base.Handler;
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.base.Output;
@@ -20,6 +20,7 @@ import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
 import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
+import it.unical.mat.embasp.specializations.dlv.desktop.DLVDesktopService;
 import it.unical.mat.embasp.specializations.dlv2.DLV2AnswerSets;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 import it.unical.object.Coin;
@@ -55,7 +56,7 @@ public class GameScreen implements Screen {
 	private static String encondingName = "raccogliMonete";
 	private InputProgram facts;
 	private InputProgram encoding;
-	
+
 	// disegnare
 	private SpriteBatch batch;
 	private int cont = 0;
@@ -116,10 +117,12 @@ public class GameScreen implements Screen {
 					handler.addProgram(facts);
 
 					encoding = new ASPInputProgram();
+//					encoding.addFilesPath("/home/matteo/git/PacMan/Gioco/core/assets/encodings/raccogliMonete");
 					encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();
+					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);
@@ -129,27 +132,35 @@ public class GameScreen implements Screen {
 					steps.add(4, null);
 					steps.add(5, null);
 					steps.add(6, null);
-
+					int lastTime = -1;
 					for (AnswerSet answerSet : answerSets.getAnswersets()) {
 						try {
 							for (Object obj : answerSet.getAtoms()) {
-								if (obj instanceof CeNemico)
-									System.out.println("NEMICO");
 								if (obj instanceof PacmanDLV) {
 									PacmanDLV step = (PacmanDLV) obj;
 									if (step.getT() > 0 && step.getT() < 8) {
 										steps.set(step.getT() - 1, new Position(step.getX(), step.getY()));
 									}
+								} else if (obj instanceof RaccoltaIstante) {
+									int currentTime = ((RaccoltaIstante) obj).getT();
+									System.out.println("abracadabra");
+									if (lastTime < currentTime && currentTime != 10) {
+										lastTime = currentTime;
+									}
 								}
+
 							}
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 								| NoSuchMethodException | SecurityException | InstantiationException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						world.getPacman().getSteps().addAll(steps);
+						if(lastTime!=-1)
+						for (int i = 0; i < lastTime && lastTime != -1; i++)
+							world.getPacman().getSteps().add(steps.get(i));
+						else world.getPacman().getSteps().addAll(steps);
 						break;
 					}
+
 				}
 				if (world.getPacman().getInter_box() == 0 && !world.getPacman().getSteps().isEmpty()) {
 
@@ -173,7 +184,8 @@ public class GameScreen implements Screen {
 			loading_dead++;
 		}
 		if (loading_dead >= 60)
-			JOptionPane.showMessageDialog(null, "hai perso");
+			;
+		// JOptionPane.showMessageDialog(null, "hai perso");
 		drawWorld(delta);
 		if (world.isCompleted()) {
 			world = new PacManWorld(world.getLevel() + 1);

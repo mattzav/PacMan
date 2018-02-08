@@ -4,12 +4,16 @@
 %nemicoPiuVicino(X,Y).
 %numeroMosseMassimo(X).
 
-%Guess sulle mosee possibili
-up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),numeroMosseMassimo(K),T<K,not raggiunto(T).
+%Guess sulle mosse possibili
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<7,not raggiunto(T).
 
-%vincolo nemico raggiunto
 raggiuntoNemico :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).
-:- not raggiuntoNemico.
+distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+
+:~ not raggiuntoNemico, distanza(D). [D@4]
 
 %pago per quanto impiego a raggiungerlo
 raggiunto(T) :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).

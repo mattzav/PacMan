@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 
 import it.unical.inputobject.Casella;
-import it.unical.inputobject.CeNemico;
 import it.unical.inputobject.Moneta;
 import it.unical.inputobject.NemicoVicino;
 import it.unical.inputobject.NumeroMosseMassimo;
 import it.unical.inputobject.Pacman;
 import it.unical.inputobject.PacmanDLV;
+import it.unical.inputobject.RaccoltaIstante;
 import it.unical.inputobject.raccoglimonete.MonetaVicina;
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
@@ -38,10 +38,10 @@ public class PacManWorld {
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = 0;
 		int speed_ghost = 1 + Math.abs((level - 1)) / 10;
-		this.ghosts.add(new Ghost(10, 10, 3, speed_ghost));
-		this.ghosts.add(new Ghost(14, 12, 1, speed_ghost));
-		this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
-		this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
+		// this.ghosts.add(new Ghost(10, 10, 3, speed_ghost));
+		this.ghosts.add(new Ghost(13, 12, 1, speed_ghost));
+		// this.ghosts.add(new Ghost(6, 4, 0, speed_ghost));
+		// this.ghosts.add(new Ghost(6, 8, 2, speed_ghost));
 		this.level = level;
 
 		this.coins = new ArrayList<Coin>();
@@ -221,7 +221,6 @@ public class PacManWorld {
 					coins.add(new Coin(i, j, false));
 				}
 
-		
 		is_crossable[3][1] = Constant.SPECIALCOIN;
 		coins.add(new Coin(3, 1, true));
 
@@ -339,32 +338,38 @@ public class PacManWorld {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
 				for (int i = 0; i < is_crossable.length; i++)
 					for (int j = 0; j < is_crossable[i].length; j++) {
-						if (is_crossable[i][j] == Constant.COIN)
-							returnValue.addObjectInput(new Moneta(i, j, "normale"));
-						else if (is_crossable[i][j] == Constant.SPECIALCOIN)
-							returnValue.addObjectInput(new Moneta(i, j, "speciale"));
-						if (is_crossable[i][j] != Constant.WALL)
-							returnValue.addObjectInput(new Casella(i, j));
+						if (Math.abs(i - pacman.getLogic_x()) + Math.abs(j - pacman.getLogic_y()) < 10) {
+							if (is_crossable[i][j] == Constant.COIN)
+								returnValue.addObjectInput(new Moneta(i, j, "normale"));
+							else if (is_crossable[i][j] == Constant.SPECIALCOIN)
+								returnValue.addObjectInput(new Moneta(i, j, "speciale"));
+							if (is_crossable[i][j] != Constant.WALL)
+								returnValue.addObjectInput(new Casella(i, j));
+						}
 					}
 				returnValue.addObjectInput(nearestCoin());
 				NemicoVicino nearestEnemy = nearestEnemy();
-				
+
 				if (nearestEnemy != null)
 					returnValue.addObjectInput(nearestEnemy);
-				
-				if(!ghosts.isEmpty())
-					returnValue.addObjectInput(new CeNemico());
-				
+
+				// passiamo un oggetto RaccoltaIstante altrimenti dlv non esegue il mapping
+				// tempo 10 perchè è un valore che non influisce sul nostro output
+				returnValue.addObjectInput(new RaccoltaIstante(10, 0, 0));
+
 			} else if (program.equals("inseguiNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
 				for (int i = 0; i < is_crossable.length; i++)
 					for (int j = 0; j < is_crossable[i].length; j++) {
-						if (is_crossable[i][j] == Constant.COIN)
-							returnValue.addObjectInput(new Moneta(i, j, "normale"));
-						else if (is_crossable[i][j] == Constant.SPECIALCOIN)
-							returnValue.addObjectInput(new Moneta(i, j, "speciale"));
-						if (is_crossable[i][j] != Constant.WALL)
-							returnValue.addObjectInput(new Casella(i, j));
+						if (Math.abs(i - pacman.getLogic_x()) + Math.abs(j - pacman.getLogic_y()) < 10) {
+
+							if (is_crossable[i][j] == Constant.COIN)
+								returnValue.addObjectInput(new Moneta(i, j, "normale"));
+							else if (is_crossable[i][j] == Constant.SPECIALCOIN)
+								returnValue.addObjectInput(new Moneta(i, j, "speciale"));
+							if (is_crossable[i][j] != Constant.WALL)
+								returnValue.addObjectInput(new Casella(i, j));
+						}
 					}
 				NemicoVicino nearestEnemy = nearestEnemy();
 				if (nearestEnemy != null) {

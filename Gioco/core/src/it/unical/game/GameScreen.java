@@ -118,6 +118,7 @@ public class GameScreen implements Screen {
 
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
+					encoding.addFilesPath(encondingPath +"utility.py"); 
 //				    encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
 					
 					handler.addProgram(encoding);

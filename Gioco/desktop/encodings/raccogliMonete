@@ -48,10 +48,12 @@ nonDoveviRaccogliere(T,X1,Y1):- pacmanDLV(T,X1,Y1),#count{X,Y : moneta(X,Y,"norm
 
 
 %calcolo la distanza finale dalla moneta più vicina
-distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
-distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
-distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
-distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+%distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
+%distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
+%distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
+%distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+
+distanza(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),&distanza(X1,Y1,X2,Y2;D).
 
 % se non raccolgo alcuna moneta, minimizzo la distanza dalla più vicina
 :~ #count{R,C : raccoltaMonetaNormale(7,R,C)}=0,distanza(D). [D@2]

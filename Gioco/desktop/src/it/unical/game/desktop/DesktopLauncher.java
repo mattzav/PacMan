@@ -11,5 +11,6 @@ public class DesktopLauncher {
 		config.width=525;
 		config.height=525;
 		new LwjglApplication(new PacManGame(), config);
+		
 	}
 }

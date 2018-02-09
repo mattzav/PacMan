@@ -118,8 +118,8 @@ public class GameScreen implements Screen {
 
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
-//				      	encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
-					//
+//				    encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
+					
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();

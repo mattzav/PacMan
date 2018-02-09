@@ -117,8 +117,8 @@ public class GameScreen implements Screen {
 					handler.addProgram(facts);
 
 					encoding = new ASPInputProgram();
-//					encoding.addFilesPath("/home/matteo/git/PacMan/Gioco/core/assets/encodings/raccogliMonete");
-					encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
+					encoding.addFilesPath(encondingPath + encondingName);
+//					encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();

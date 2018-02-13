@@ -5,13 +5,13 @@
 %numeroMosseMassimo(X).
 
 %Guess sulle mosse possibili
-up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<7,not raggiunto(T).
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),not raggiunto(T),numeroMosseMassimo(K),T<K.
 
 raggiuntoNemico :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).
-distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
-distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
-distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
-distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
+distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
 %distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),&distanza(X1,Y1,X2,Y2;D).
 

@@ -34,10 +34,10 @@ public class PacManWorld {
 	private int level;
 	private int point;
 
-	public PacManWorld(int level) {
+	public PacManWorld(int level,int point) {
 
 		this.ghosts = new ArrayList<Ghost>();
-		this.point = 0;
+		this.point = point;
 		int speed_ghost = 1 + Math.abs((level - 1)) / 10;
 		this.ghosts.add(new Ghost(9, 10, 3, speed_ghost+level/5));
 		this.ghosts.add(new Ghost(9, 9, 1, speed_ghost+level/5));
@@ -399,8 +399,8 @@ public class PacManWorld {
 							10 + Constant.distanza(new Position(nearestEnemy.getX(), nearestEnemy.getY()),
 									new Position(pacman.getLogic_x(), pacman.getLogic_y()))));
 				}
-				System.out.println((int)pacman.getRemainingTimeSpecial()/(1000+(level*150))+" : "+pacman.getRemainingTimeSpecial());
-				returnValue.addObjectInput(new NumeroMosseMassimo(Math.min(7, (int)pacman.getRemainingTimeSpecial()/(1000+(level*150)))));
+				System.out.println(1+(int)pacman.getRemainingTimeSpecial()/(1000+(level*150)));
+				returnValue.addObjectInput(new NumeroMosseMassimo(Math.min(7, 1+(int)pacman.getRemainingTimeSpecial()/(1000+(level*150)))));
 				
 			} else if (program.equals("scappaDalNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));

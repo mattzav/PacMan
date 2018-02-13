@@ -6,7 +6,7 @@
 %distanzaFisica(X,Y,X1,Y1,D).
 
 %Guess sulle mosse possibili
-up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<3.
+up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<7.
 
 %vincolo mossa consentita
 :- up(T),pacmanDLV(T,X,Y),not casella(X-1,Y).
@@ -20,26 +20,30 @@ pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
 
-distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(3,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
-distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(3,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
-distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(3,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
-distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(3,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
+distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
+distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
+distanzaFinale(ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
-:~distanzaFinale(ID,D),nemico(ID,Peso,_,_). [100-D@Peso,ID]
-
-distanzaMinimaNemico(ID,X):-#min{D : distanzaCorrente(T,ID,D)}=X,nemico(ID,_,_,_).
-:~#min{X : distanzaMinimaNemico(ID,X)}=D. [100-D@3]
-
-%si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
-urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),X1>=X-1,Y1>=Y-1,X1<=X+1,Y1<=Y+1}>2.
+:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y). [1@10,ID]
+:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y1),Y>=Y1-1,Y<=Y1+1. [1@9,ID,T]
+:~ pacmanDLV(T,X,Y),nemico(ID,_,X1,Y),X>=X1-1,X<=X1+1. [1@9,ID,T]
 
 %cerco di raggiungere la moneta speciale se ho urgenza
-:~urgenza(T),pacmanDLV(T+1,R,C),not moneta(R,C,speciale). [1@2,T,R,C]
+:~urgenza(T),pacmanDLV(T+1,R,C),not moneta(R,C,speciale). [1@8,T,R,C]
+
+:~distanzaFinale(ID,D),nemico(ID,Peso,_,_). [200-D@Peso,ID]
+
+%distanzaMinimaNemico(ID,X):- #min{D : distanzaCorrente(T,ID,D)}=X,nemico(ID,_,_,_).
+%:~#min{X : distanzaMinimaNemico(ID,X)}=D. [100-D@3]
+
+%si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
+urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),X1>=X-3,Y1>=Y-3,X1<=X+3,Y1<=Y+3}!=0.
 
 % aggiornamento delle monete raccolte
 raccoltaMonetaNormale(T,X,Y):- pacmanDLV(T,X,Y),moneta(X,Y,"normale").
@@ -76,7 +80,7 @@ raccoltaMonetaNormale(T+1,X,Y):-raccoltaMonetaNormale(T,X,Y),T<7.
 %:~urgenza(T),moneta(R,C,speciale,P),pacmanDLV(T,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(T+1,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [1@P,T,R,C] %1 perchè mi muovo al più di una mossa
 
 %su un livello minore cerco di avvicinarmi a qualche moneta normale
-%:~moneta(R,C,normale,P),pacmanDLV(0,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(3,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [D1-D@P,R,C]
+%:~moneta(R,C,normale,P),pacmanDLV(0,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(7,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [D1-D@P,R,C]
 
 %massimizzo il numero di monete raccolte
 %pesoMax(L):-L=#max{P: moneta(X,Y,normale,P)}.

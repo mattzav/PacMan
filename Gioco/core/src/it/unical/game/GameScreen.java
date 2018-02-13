@@ -69,7 +69,7 @@ public class GameScreen implements Screen {
 		this.game = game;
 		this.aiPlays = aiPlays;
 		batch = new SpriteBatch();
-		world = new PacManWorld(1);
+		world = new PacManWorld(1,0);
 		isDied = false;
 		generator1 = new FreeTypeFontGenerator(Gdx.files.internal("font/CrackMan.TTF"));
 		generator2 = new FreeTypeFontGenerator(Gdx.files.internal("font/PacFont.ttf"));
@@ -115,9 +115,7 @@ public class GameScreen implements Screen {
 
 					facts = world.getInputFacts(encondingName);
 					handler.addProgram(facts);
-					if (encondingName.equals("scappaDalNemico"))
-						System.out.println(facts.getPrograms());
-
+					
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
 					encoding.addFilesPath(encondingPath + "utility.py");
@@ -128,7 +126,7 @@ public class GameScreen implements Screen {
 
 					Output output = handler.startSync();
 					AnswerSets answerSets = (AnswerSets) output;
-					ArrayList<Position> steps = new ArrayList<>();
+					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);
 					steps.add(1, null);
 					steps.add(2, null);
@@ -157,16 +155,23 @@ public class GameScreen implements Screen {
 								| NoSuchMethodException | SecurityException | InstantiationException e) {
 							e.printStackTrace();
 						}
+
 						
 						if (!encondingName.equals("scappaDalNemico")) {
 							if (lastTime != -1 && encondingName.equals("raccogliMonete"))
 								for (int i = 0; i < lastTime; i++)
 									world.getPacman().getSteps().add(steps.get(i));
-							else
-								world.getPacman().getSteps().addAll(steps);
+							else {
+								for(int i = 0;i<steps.size();i++)
+									if(steps.get(i) != null)
+										world.getPacman().getSteps().add(steps.get(i));
+									else
+										break;
+							}
 						}
 						else {
-							for (int i = 0; i < 3; i++)
+							System.out.println(facts.getPrograms());
+							for (int i = 0; i < 7; i++)
 								world.getPacman().getSteps().add(steps.get(i));
 						}
 
@@ -184,7 +189,6 @@ public class GameScreen implements Screen {
 					if (nextStep != null) {
 						Position pacmanPosition = new Position(world.getPacman().getLogic_x(),
 								world.getPacman().getLogic_y());
-						System.out.println(nextStep.getX() + " " + nextStep.getY());
 						world.updatePlayerNextDirection(new Vector2(nextStep.getX() - pacmanPosition.getX(),
 								nextStep.getY() - pacmanPosition.getY()));
 					}
@@ -201,7 +205,7 @@ public class GameScreen implements Screen {
 		// JOptionPane.showMessageDialog(null, "hai perso");
 		drawWorld(delta);
 		if (world.isCompleted()) {
-			world = new PacManWorld(world.getLevel() + 1);
+			world = new PacManWorld(world.getLevel() + 1,world.getPoint());
 		}
 
 	}

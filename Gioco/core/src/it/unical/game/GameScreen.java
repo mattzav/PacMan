@@ -30,7 +30,6 @@ import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -38,9 +37,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.CharArray;
 
 public class GameScreen implements Screen {
 
@@ -107,7 +103,11 @@ public class GameScreen implements Screen {
 				else if (Gdx.input.isKeyJustPressed(Keys.RIGHT))
 					world.updatePlayerNextDirection(Constant.DX);
 			} else {
-				if (!world.getPacman().hasMoreSteps() && world.getPacman().getInter_box() == 0.f) {
+				
+					if(encondingName.equals("raccogliMonete") && world.getOptimalProgram().equals("scappaDalNemico"))
+						world.getPacman().getSteps().clear();
+						
+					if (!world.getPacman().hasMoreSteps() && world.getPacman().getInter_box() == 0.f) {
 
 					// valutare se aggiungere programma dlv che dicide quale programma lanciare
 					encondingName = world.getOptimalProgram();
@@ -115,16 +115,18 @@ public class GameScreen implements Screen {
 
 					facts = world.getInputFacts(encondingName);
 					handler.addProgram(facts);
+					if (encondingName.equals("scappaDalNemico"))
+						System.out.println(facts.getPrograms());
 
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
-					encoding.addFilesPath(encondingPath +"utility.py"); 
-//				    encoding.addProgram(Gdx.files.internal(encondingPath + encondingName).readString());
-					
+					encoding.addFilesPath(encondingPath + "utility.py");
+					// encoding.addProgram(Gdx.files.internal(encondingPath +
+					// encondingName).readString());
+
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();
-					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList<>();
 					steps.add(0, null);
@@ -145,7 +147,6 @@ public class GameScreen implements Screen {
 									}
 								} else if (obj instanceof RaccoltaIstante) {
 									int currentTime = ((RaccoltaIstante) obj).getT();
-									System.out.println("abracadabra");
 									if (lastTime < currentTime && currentTime != 10) {
 										lastTime = currentTime;
 									}
@@ -156,11 +157,21 @@ public class GameScreen implements Screen {
 								| NoSuchMethodException | SecurityException | InstantiationException e) {
 							e.printStackTrace();
 						}
-						if(lastTime!=-1)
-						for (int i = 0; i < lastTime && lastTime != -1; i++)
-							world.getPacman().getSteps().add(steps.get(i));
-						else world.getPacman().getSteps().addAll(steps);
+						
+						if (!encondingName.equals("scappaDalNemico")) {
+							if (lastTime != -1 && encondingName.equals("raccogliMonete"))
+								for (int i = 0; i < lastTime; i++)
+									world.getPacman().getSteps().add(steps.get(i));
+							else
+								world.getPacman().getSteps().addAll(steps);
+						}
+						else {
+							for (int i = 0; i < 3; i++)
+								world.getPacman().getSteps().add(steps.get(i));
+						}
+
 						break;
+
 					}
 
 				}

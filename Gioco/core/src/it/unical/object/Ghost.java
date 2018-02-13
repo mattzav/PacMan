@@ -26,9 +26,9 @@ public class Ghost {
 	private int countLastMove;
 	private float inter_box;
 	private boolean is_died;
-	private int speed;
+	private float speed;
 
-	public Ghost(int logic_x, int logic_y, int colour, int speed) {
+	public Ghost(int logic_x, int logic_y, int colour, float speed) {
 		this.logic_x = logic_x;
 		this.logic_y = logic_y;
 		this.direction = new Vector2(0, 0);
@@ -177,7 +177,7 @@ public class Ghost {
 
 		// se non � fermo aggiorno la posizione
 		if (!(direction.x == 0 && direction.y == 0)) {
-			inter_box += delta * speed * 3;
+			inter_box += delta * speed * 50;
 			
 			//se � arrivato alla casella successiva lo fermo
 			if (inter_box >= Constant.box_size + 1) {
@@ -206,12 +206,18 @@ public class Ghost {
 					FindPath.getInstance().printPath(ghost_position, pacman_position, pathposition,
 							Constant.distanza(ghost_position, pacman_position));
 					for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
+						
 						next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
 				} 
 				// altrimenti, in modo stupido, o prosegue nella direzione in cui sta andando o ne sorteggia un'altra diversa da quella attuale
 				else {
 					countLastMove++;
-					if (is_crossable[(int) (logic_x + lastdirection.x)][(int) (logic_y
+					if (logic_x == 9 && logic_y == 17 && lastdirection.y == 1) {
+						logic_y = 0;
+					} else if (logic_x == 9 && logic_y == 1 && lastdirection.y == -1) {
+						logic_y = 18;
+					}
+					else if (is_crossable[(int) (logic_x + lastdirection.x)][(int) (logic_y
 							+ lastdirection.y)] != Constant.WALL)
 						next_position.add(new Vector2(logic_x + lastdirection.x, logic_y + lastdirection.y));
 					else
@@ -262,14 +268,17 @@ public class Ghost {
 					next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
 			}
 		}
-		
-		// qui aggiorno la nuova direzione: finch� ho posizioni da raggiungere, prendo la successiva e calcolo la direzione
-		// come sottrazione tra le coordinate di partena e di arrivo
-		while (!next_position.isEmpty() && direction.x == 0 && direction.y == 0) {
-			Vector2 next = next_position.remove(0);
-			direction.x = next.x - logic_x;
-			direction.y = next.y - logic_y;
-		}
+
+	// qui aggiorno la nuova direzione: finch� ho posizioni da raggiungere, prendo
+	// la successiva e calcolo la direzione
+	// come sottrazione tra le coordinate di partena e di arrivo
+	while(!next_position.isEmpty()&&direction.x==0&&direction.y==0)
+
+	{
+		Vector2 next = next_position.remove(0);
+		direction.x = next.x - logic_x;
+		direction.y = next.y - logic_y;
+	}
 	}
 
 	public float getInter_box() {

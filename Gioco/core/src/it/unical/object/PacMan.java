@@ -103,9 +103,9 @@ public class PacMan {
 
 	public void update(int[][] is_crossable, float delta) {
 		if (GameScreen.aiPlays) {
-			if (logic_x == 9 && logic_y == 18 && direction.y == 1) {
+			if (logic_x == 9 && logic_y == 17 && direction.y == 1) {
 				logic_y = 0;
-			} else if (logic_x == 9 && logic_y == 0 && direction.y == -1) {
+			} else if (logic_x == 9 && logic_y == 1 && direction.y == -1) {
 				logic_y = 18;
 			} else if (is_crossable[(int) (logic_x + next_direction.x)][(int) (logic_y
 					+ next_direction.y)] == Constant.WALL) {
@@ -134,7 +134,7 @@ public class PacMan {
 		if (direction.x == 0 && direction.y == 0)
 			return;
 
-		inter_box += 2 * delta * 40;
+		inter_box +=  delta * 80;
 
 		if (inter_box >= Constant.box_size + 2) {
 
@@ -218,6 +218,10 @@ public class PacMan {
 	public ArrayList<Position> getSteps() {
 		// TODO Auto-generated method stub
 		return nextSteps;
+	}
+
+	public long getRemainingTimeSpecial() {
+		return startTimeSpecial+10000-System.currentTimeMillis();
 	}
 
 }

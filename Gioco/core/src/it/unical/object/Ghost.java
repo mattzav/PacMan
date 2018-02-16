@@ -93,91 +93,17 @@ public class Ghost {
 	public void move_down() {
 	}
 
-	// public void setNewDirection(PacMan pacman, int[][] is_crossable) {
-	//
-	// int ghostx = (int) (this.logic_y * Constant.box_size + inter_box *
-	// direction.y);
-	// int ghosty = (int) (this.logic_x * Constant.box_size + inter_box *
-	// direction.x);
-	// int playerx = (int) (pacman.getLogic_y() * Constant.box_size +
-	// pacman.getInter_box() * pacman.getDirection().y);
-	// int playery = (int) (pacman.getLogic_x() * Constant.box_size +
-	// pacman.getInter_box() * pacman.getDirection().x);
-	//
-	// int destination_ghost_x = (int) (logic_x + direction.x);
-	// int destination_ghost_y = (int) (logic_y + direction.y);
-	//
-	// int greedy[] = new int[4];
-	// // peso di andare a destra
-	// greedy[0] = playerx - ghostx;
-	//
-	// // peso di andare sopra
-	// greedy[1] = ghosty - playery;
-	//
-	// // peso di andare sinistra
-	// greedy[2] = (-playerx + ghostx);
-	//
-	// // peso di andare sotto
-	// greedy[3] = playery - ghosty;
-	//
-	// boolean direction_found = false;
-	// while (!direction_found) {
-	//
-	// int max_value = greedy[0];
-	// int index = 0;
-	//
-	// for (int i = 1; i < 4; i++) {
-	// if (greedy[i] > max_value) {
-	// max_value = greedy[i];
-	// index = i;
-	// }
-	// }
-	//
-	// switch (index) {
-	// case 0:
-	// if (is_crossable[destination_ghost_x][destination_ghost_y + 1] !=
-	// Constant.WALL) {
-	// setNextDirection(Constant.DX);
-	// direction_found = true;
-	// }
-	// break;
-	// case 1:
-	//
-	// if (is_crossable[destination_ghost_x - 1][destination_ghost_y] !=
-	// Constant.WALL) {
-	// setNextDirection(Constant.UP);
-	// direction_found = true;
-	// }
-	// break;
-	// case 2:
-	//
-	// if (is_crossable[destination_ghost_x][destination_ghost_y - 1] !=
-	// Constant.WALL) {
-	// setNextDirection(Constant.SX);
-	// direction_found = true;
-	// }
-	// break;
-	// case 3:
-	// if (is_crossable[destination_ghost_x + 1][destination_ghost_y] !=
-	// Constant.WALL) {
-	// setNextDirection(Constant.DOWN);
-	// direction_found = true;
-	// }
-	// break;
-	// default:
-	// break;
-	// }
-	// if (!direction_found)
-	// greedy[index] = Integer.MIN_VALUE;
-	// }
-	//
-	// }
-
+	
 	public void update(PacMan pacman, int[][] is_crossable, float delta) {
 
 		// se non � fermo aggiorno la posizione
+		int multiple = 2;
+		
+		if(pacman.isSpecial())
+			multiple/=2;
+		
 		if (!(direction.x == 0 && direction.y == 0)) {
-			inter_box += delta * speed * 50;
+			inter_box += delta * speed * multiple;
 			
 			//se � arrivato alla casella successiva lo fermo
 			if (inter_box >= Constant.box_size + 1) {

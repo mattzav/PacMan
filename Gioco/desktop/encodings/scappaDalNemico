@@ -32,8 +32,10 @@ distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2>=X1,Y2<=
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
-:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y). [1@13,ID]
-:~distanzaCorrente(T,ID,D),D<=4. [1@13-D,ID,T]
+:~ pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T<T1. [1@17,T]
+
+:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y). [1@16,ID]
+:~ distanzaCorrente(T,ID,D),D<=7. [1@16-D,ID,T]
 %:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y1),Y>=Y1-4,Y<=Y1+4. [1@9,ID,T]
 %:~ pacmanDLV(T,X,Y),nemico(ID,_,X1,Y),X>=X1-4,X<=X1+4. [1@9,ID,T]
 
@@ -53,8 +55,17 @@ raccoltaMonetaNormale(T,X,Y):- pacmanDLV(T,X,Y),moneta(X,Y,"normale").
 raccoltaMonetaNormale(T+1,X,Y):-raccoltaMonetaNormale(T,X,Y),T<7.
 
 %pago se non raccolgo monete normali.
-:~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@1,T,X,Y]
-:~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@1,T,X,Y]
+:~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@2,T,X,Y]
+:~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@2,T,X,Y]
+
+distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2>=Y1,D1=X2-X1,D2=Y2-Y1,D=D1+D2.
+distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X1,Y2<=Y1,D1=X2-X1,D2=Y1-Y2,D=D1+D2.
+distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
+distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
+
+%se non raccolgo la moneta piu vicina, minimizzo la distanza
+monetaPiuVicinaRaccolta :- raccoltaMonetaNormale(_,X,Y),monetaPiuVicina(X,Y).
+:~ distanzaPacmanMonetaVicina(D),not monetaPiuVicinaRaccolta. [D@1]
 
 
 

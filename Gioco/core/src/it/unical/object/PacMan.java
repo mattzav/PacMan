@@ -23,7 +23,7 @@ public class PacMan {
 	private Vector2 direction;
 	private float inter_box;
 	private boolean is_died;
-
+	private int speed;
 	private float animation;
 	private PacManWorld world;
 
@@ -36,6 +36,7 @@ public class PacMan {
 		this.logic_x = logic_x;
 		this.logic_y = logic_y;
 		this.next_direction = new Vector2(0, 0);
+		this.speed = 80;
 		inter_box = 0;
 		is_died = false;
 		direction = new Vector2(0, 0);
@@ -134,7 +135,7 @@ public class PacMan {
 		if (direction.x == 0 && direction.y == 0)
 			return;
 
-		inter_box +=  delta * 80;
+		inter_box += delta * speed ;
 
 		if (inter_box >= Constant.box_size + 2) {
 
@@ -221,7 +222,7 @@ public class PacMan {
 	}
 
 	public long getRemainingTimeSpecial() {
-		return startTimeSpecial+10000-System.currentTimeMillis();
+		return startTimeSpecial + 10000 - System.currentTimeMillis();
 	}
 
 }

@@ -92,7 +92,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		world.updatePlayer(delta);
-		if (!isDied) {
+	    if (!isDied) {
 			if (!aiPlays) {
 				if (Gdx.input.isKeyJustPressed(Keys.UP))
 					world.updatePlayerNextDirection(Constant.UP);
@@ -114,7 +114,6 @@ public class GameScreen implements Screen {
 					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
 
 					facts = world.getInputFacts(encondingName);
-					System.out.println("fatti\n"+facts.getPrograms());
 					handler.addProgram(facts);
 					
 					encoding = new ASPInputProgram();
@@ -124,23 +123,19 @@ public class GameScreen implements Screen {
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();
-					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);
 					steps.add(1, null);
 					steps.add(2, null);
 					steps.add(3, null);
-					steps.add(4, null);
-					steps.add(5, null);
-					steps.add(6, null);
 					int lastTime = -1;
 					for (AnswerSet answerSet : answerSets.getAnswersets()) {
 						try {
 							for (Object obj : answerSet.getAtoms()) {
 								if (obj instanceof PacmanDLV) {
 									PacmanDLV step = (PacmanDLV) obj;
-									if (step.getT() > 0 && step.getT() < 8) {
+									if (step.getT() > 0 && step.getT() < 5) {
 										steps.set(step.getT() - 1, new Position(step.getX(), step.getY()));
 									}
 								} else if (obj instanceof RaccoltaIstante) {
@@ -159,7 +154,7 @@ public class GameScreen implements Screen {
 						
 						if (!encondingName.equals("scappaDalNemico")) {
 							if (lastTime != -1 && encondingName.equals("raccogliMonete"))
-								for (int i = 0; i < lastTime; i++)
+								for (int i = 0; i < lastTime && i<4; i++)
 									world.getPacman().getSteps().add(steps.get(i));
 							else {
 								for(int i = 0;i<steps.size();i++)
@@ -170,8 +165,7 @@ public class GameScreen implements Screen {
 							}
 						}
 						else {
-							System.out.println(facts.getPrograms());
-							for (int i = 0; i < 7; i++)
+							for (int i = 0; i < 4; i++)
 								world.getPacman().getSteps().add(steps.get(i));
 						}
 
@@ -186,7 +180,7 @@ public class GameScreen implements Screen {
 					Position nextStep = pacmanSteps.remove(0);
 					while (nextStep == null && !pacmanSteps.isEmpty())
 						nextStep = pacmanSteps.remove(0);
-					if (nextStep != null) {
+	    			if (nextStep != null) {
 						Position pacmanPosition = new Position(world.getPacman().getLogic_x(),
 								world.getPacman().getLogic_y());
 						world.updatePlayerNextDirection(new Vector2(nextStep.getX() - pacmanPosition.getX(),

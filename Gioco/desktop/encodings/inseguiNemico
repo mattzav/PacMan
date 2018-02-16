@@ -15,6 +15,9 @@ distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X
 
 %distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),&distanza(X1,Y1,X2,Y2;D).
 
+%si paga per ogni volta che si ritorna su una posizione gia visitata
+:~ pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T<T1. [1@5,T]
+
 :~ not raggiuntoNemico, distanza(D). [D@4]
 
 %pago per quanto impiego a raggiungerlo

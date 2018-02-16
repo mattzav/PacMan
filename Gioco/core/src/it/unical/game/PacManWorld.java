@@ -326,11 +326,23 @@ public class PacManWorld {
 	}
 
 	public String getOptimalProgram() {
-		if (pacman.isSpecial() && !ghosts.isEmpty())
-			return "inseguiNemico";
-		if (!pacman.isSpecial()) {
+		boolean changePacman=false;
+		Position pacmanPosition = new Position(pacman.getLogic_x(), pacman.getLogic_y());
+		if (pacman.isSpecial() && !ghosts.isEmpty()) {
+			int distance=(int)pacman.getRemainingTimeSpecial()/(1000+(level*150));
+			boolean found=false;
+			for (Ghost ghost : ghosts) {
+				if (Constant.distanza(pacmanPosition, new Position(ghost.getLogic_x(), ghost.getLogic_y())) <= distance)
+					found=true;
+			}
+			if(found)
+				return "inseguiNemico";
+			changePacman=true;
+			
+		}
+		
+		if (!pacman.isSpecial() || changePacman) {
 			int nearEnemies = 0;
-			Position pacmanPosition = new Position(pacman.getLogic_x(), pacman.getLogic_y());
 			for (Ghost ghost : ghosts) {
 				if (Constant.distanza(pacmanPosition, new Position(ghost.getLogic_x(), ghost.getLogic_y())) <= 7)
 					nearEnemies++;
@@ -395,12 +407,8 @@ public class PacManWorld {
 				NemicoVicino nearestEnemy = nearestEnemy();
 				if (nearestEnemy != null) {
 					returnValue.addObjectInput(nearestEnemy);
-					returnValue.addObjectInput(new NumeroMosseMassimo(
-							10 + Constant.distanza(new Position(nearestEnemy.getX(), nearestEnemy.getY()),
-									new Position(pacman.getLogic_x(), pacman.getLogic_y()))));
 				}
-				System.out.println(1+(int)pacman.getRemainingTimeSpecial()/(1000+(level*150)));
-				returnValue.addObjectInput(new NumeroMosseMassimo(Math.min(7, 1+(int)pacman.getRemainingTimeSpecial()/(1000+(level*150)))));
+				returnValue.addObjectInput(new NumeroMosseMassimo(Math.min(7, (int)pacman.getRemainingTimeSpecial()/(1000+(level*150)))));
 				
 			} else if (program.equals("scappaDalNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));

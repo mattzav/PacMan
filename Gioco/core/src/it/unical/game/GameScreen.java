@@ -114,17 +114,17 @@ public class GameScreen implements Screen {
 					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
 
 					facts = world.getInputFacts(encondingName);
+					System.out.println("fatti\n"+facts.getPrograms());
 					handler.addProgram(facts);
 					
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
 					encoding.addFilesPath(encondingPath + "utility.py");
-					// encoding.addProgram(Gdx.files.internal(encondingPath +
-					// encondingName).readString());
 
 					handler.addProgram(encoding);
 
 					Output output = handler.startSync();
+					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);

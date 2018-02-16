@@ -10,6 +10,7 @@ public class NumeroMosseMassimo {
 	int distanza;
 
 	public NumeroMosseMassimo() {
+	
 	}
 
 	public NumeroMosseMassimo(int distanza) {

@@ -79,19 +79,11 @@ public class PacMan {
 	public boolean isSpecial() {
 		return isSpecial;
 	}
-
-	public void move_dx() {
+	
+	public Vector2 getPhysicalPosition() {
+		return new Vector2(logic_x*20+inter_box*direction.x,logic_y*20+inter_box*direction.y);
 	}
-
-	public void move_sx() {
-	}
-
-	public void move_up() {
-	}
-
-	public void move_down() {
-	}
-
+	
 	public void setNextDirection(Vector2 next_direction) {
 		this.next_direction.x = next_direction.x;
 		this.next_direction.y = next_direction.y;

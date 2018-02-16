@@ -1,0 +1,10 @@
+mario;140
+ZAV;10
+matteo;10
+matteo;10
+matteo;10
+matteo;10
+matteo;10
+A;10
+B;9
+C;8

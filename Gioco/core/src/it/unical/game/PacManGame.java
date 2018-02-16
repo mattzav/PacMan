@@ -1,5 +1,7 @@
 package it.unical.game;
 
+import java.io.IOException;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +17,7 @@ public class PacManGame extends Game {
 	private GameScreen game;
 	private StartScreen menu;
 	private SettingsScreen settings;
+	private ScoreScreen score;
 	private boolean aiPlays;
 
 	@Override
@@ -23,19 +26,26 @@ public class PacManGame extends Game {
 		menu = new StartScreen(this);
 		game = new GameScreen(this, true);
 		settings = new SettingsScreen(this);
+		
 		setScreen(menu);
 	}
 
-	public void swap(int state) {
-		System.out.println(state);
+	public void swap(int state, String player, int playerScore) {
 		if (state == Constant.MENUSTATE)
 			setScreen(menu);
 		else if (state == Constant.GAMESTATE) {
 			game.setAIPlays(aiPlays);
 			setScreen(game);
-		}
-		else if (state == Constant.SETTINGSTATE)
+		} else if (state == Constant.SETTINGSTATE)
 			setScreen(settings);
+		else if (state == Constant.SCORESTATE) {
+			try {
+				score = new ScoreScreen(this, player, playerScore);
+				setScreen(score);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override

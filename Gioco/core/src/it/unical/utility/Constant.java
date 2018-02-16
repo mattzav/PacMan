@@ -20,9 +20,9 @@ public class Constant {
 	public static Vector2 SX = new Vector2(0, -1);
 	public static Vector2 DX = new Vector2(0, 1);
 	public static Vector2 corner_upsx_start_maze = new Vector2(0, 0);
-	public static int maze_width = 520;
-	public static int maze_height = 580;
-	public static float box_size = maze_width / 26;
+	public static int maze_width = 380;
+	public static int maze_height = 420;
+	public static float box_size = maze_width / 19;
 
 	public static String path = "img/";
 
@@ -75,6 +75,7 @@ public class Constant {
 	public static int MENUSTATE = 0;
 	public static int GAMESTATE = 1;
 	public static int SETTINGSTATE = 2;
+	public static int SCORESTATE = 3;
 	
 
 	public static Vector2[] corners = { new Vector2(1, 1), new Vector2(1, 17), new Vector2(19, 1),

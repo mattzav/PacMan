@@ -39,9 +39,9 @@ public class PacManWorld {
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = point;
 		int speed_ghost = 30;
-		
+
 		this.ghosts.add(new Ghost(9, 10, 3, speed_ghost + level));
-		this.ghosts.add(new Ghost(9, 9, 1, speed_ghost +  level));
+		this.ghosts.add(new Ghost(9, 9, 1, speed_ghost + level));
 		this.ghosts.add(new Ghost(9, 8, 0, speed_ghost + level));
 		this.ghosts.add(new Ghost(8, 9, 2, speed_ghost + level));
 		this.level = level;
@@ -294,7 +294,10 @@ public class PacManWorld {
 	public boolean checkPlayerDied() {
 		ArrayList<Ghost> died = new ArrayList<Ghost>();
 		for (Ghost ghost : ghosts) {
-			if (ghost.getLogic_x() == pacman.getLogic_x() && ghost.getLogic_y() == pacman.getLogic_y()) {
+			if (Math.abs(ghost.getPhysicalPosition().x - pacman.getPhysicalPosition().x)
+					+ Math.abs(ghost.getPhysicalPosition().y - pacman.getPhysicalPosition().y) <= 5) {
+				// if (ghost.getLogic_x() == pacman.getLogic_x() && ghost.getLogic_y() ==
+				// pacman.getLogic_y()) {
 				if (pacman.isSpecial()) {
 					died.add(ghost);
 					point += 300;
@@ -308,6 +311,7 @@ public class PacManWorld {
 		}
 		ghosts.removeAll(died);
 		return false;
+
 	}
 
 	public int getLevel() {
@@ -333,7 +337,7 @@ public class PacManWorld {
 
 			// cambiare il 200 per variare l 'insistenza nella ricerca del nemico ( se
 			// aumenta si arrende prima)
-			int distance = (int) pacman.getRemainingTimeSpecial() / (25*level + 50);
+			int distance = (int) pacman.getRemainingTimeSpecial() / (25 * level + 50);
 
 			boolean found = false;
 			System.out.println("aaaaaaa" + distance + "aaaaa");
@@ -372,7 +376,7 @@ public class PacManWorld {
 					for (int j = 0; j < is_crossable[i].length; j++) {
 						if ((i == 8 && j == 9) || (i == 9 && j == 2) || (i == 9 && j == 16))
 							continue;
-						if (Math.abs(i - pacman.getLogic_x()) + Math.abs(j - pacman.getLogic_y()) < 10) {
+						if (Math.abs(i - pacman.getLogic_x()) + Math.abs(j - pacman.getLogic_y()) < 15) {
 							if (is_crossable[i][j] == Constant.COIN)
 								returnValue.addObjectInput(new Moneta(i, j, "normale"));
 							else if (is_crossable[i][j] == Constant.SPECIALCOIN)
@@ -417,8 +421,8 @@ public class PacManWorld {
 				if (nearestEnemy != null) {
 					returnValue.addObjectInput(nearestEnemy);
 				}
-				returnValue.addObjectInput(
-						new NumeroMosseMassimo(Math.min(7, (int) pacman.getRemainingTimeSpecial() / (25*level +50)));
+				returnValue.addObjectInput(new NumeroMosseMassimo(
+						Math.min(7, (int) pacman.getRemainingTimeSpecial() / ((25 * level) + 50))));
 
 			} else if (program.equals("scappaDalNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
@@ -496,7 +500,7 @@ public class PacManWorld {
 				nearestCoin = coin;
 			}
 		}
-		if(nearestCoin == null)
+		if (nearestCoin == null)
 			return null;
 		return new MonetaVicina(nearestCoin.getLogic_x(), nearestCoin.getLogic_y());
 	}

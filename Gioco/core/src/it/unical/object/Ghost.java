@@ -81,31 +81,22 @@ public class Ghost {
 		this.is_died = is_died;
 	}
 
-	public void move_dx() {
+	public Vector2 getPhysicalPosition() {
+		return new Vector2(logic_x * 20 + inter_box * direction.x, logic_y * 20 + inter_box * direction.y);
 	}
 
-	public void move_sx() {
-	}
-
-	public void move_up() {
-	}
-
-	public void move_down() {
-	}
-
-	
 	public void update(PacMan pacman, int[][] is_crossable, float delta) {
 
 		// se non � fermo aggiorno la posizione
 		int multiple = 2;
-		
-		if(pacman.isSpecial())
-			multiple/=2;
-		
+
+		if (pacman.isSpecial())
+			multiple /= 2;
+
 		if (!(direction.x == 0 && direction.y == 0)) {
 			inter_box += delta * speed * multiple;
-			
-			//se � arrivato alla casella successiva lo fermo
+
+			// se � arrivato alla casella successiva lo fermo
 			if (inter_box >= Constant.box_size + 1) {
 				inter_box = 0;
 				logic_x += direction.x;
@@ -122,32 +113,32 @@ public class Ghost {
 			Position pacman_position = new Position(pacman.getLogic_x(), pacman.getLogic_y());
 			Position ghost_position = new Position(logic_x, logic_y);
 			pathposition.add(ghost_position);
-			
+
 			// se pacman non � speciale
 			if (!pacman.isSpecial()) {
-				
+
 				// se entra nel raggio di 7 caselle lo insegue
 				if (Constant.distanza(pacman_position, ghost_position) < 7
 						|| (lastdirection.x == 0 && lastdirection.y == 0)) {
 					FindPath.getInstance().printPath(ghost_position, pacman_position, pathposition,
 							Constant.distanza(ghost_position, pacman_position));
 					for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
-						
+
 						next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
-				} 
-				// altrimenti, in modo stupido, o prosegue nella direzione in cui sta andando o ne sorteggia un'altra diversa da quella attuale
+				}
+				// altrimenti, in modo stupido, o prosegue nella direzione in cui sta andando o
+				// ne sorteggia un'altra diversa da quella attuale
 				else {
 					countLastMove++;
 					if (logic_x == 9 && logic_y == 17 && lastdirection.y == 1) {
 						logic_y = 0;
 					} else if (logic_x == 9 && logic_y == 1 && lastdirection.y == -1) {
 						logic_y = 18;
-					}
-					else if (is_crossable[(int) (logic_x + lastdirection.x)][(int) (logic_y
+					} else if (is_crossable[(int) (logic_x + lastdirection.x)][(int) (logic_y
 							+ lastdirection.y)] != Constant.WALL)
 						next_position.add(new Vector2(logic_x + lastdirection.x, logic_y + lastdirection.y));
 					else
-						countLastMove=10;
+						countLastMove = 10;
 					if (countLastMove == 10) {
 						countLastMove = 0;
 						boolean choose = false;
@@ -171,8 +162,9 @@ public class Ghost {
 						}
 					}
 				}
-			} 
-			// se invece pacman � speciale cerca il cammino verso l'angolo pi� lontano da pacman
+			}
+			// se invece pacman � speciale cerca il cammino verso l'angolo pi� lontano da
+			// pacman
 			else {
 				next_position.clear();
 				float max_distance = Float.MIN_VALUE;
@@ -195,16 +187,16 @@ public class Ghost {
 			}
 		}
 
-	// qui aggiorno la nuova direzione: finch� ho posizioni da raggiungere, prendo
-	// la successiva e calcolo la direzione
-	// come sottrazione tra le coordinate di partena e di arrivo
-	while(!next_position.isEmpty()&&direction.x==0&&direction.y==0)
+		// qui aggiorno la nuova direzione: finch� ho posizioni da raggiungere, prendo
+		// la successiva e calcolo la direzione
+		// come sottrazione tra le coordinate di partena e di arrivo
+		while (!next_position.isEmpty() && direction.x == 0 && direction.y == 0)
 
-	{
-		Vector2 next = next_position.remove(0);
-		direction.x = next.x - logic_x;
-		direction.y = next.y - logic_y;
-	}
+		{
+			Vector2 next = next_position.remove(0);
+			direction.x = next.x - logic_x;
+			direction.y = next.y - logic_y;
+		}
 	}
 
 	public float getInter_box() {

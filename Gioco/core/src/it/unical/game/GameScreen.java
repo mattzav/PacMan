@@ -62,6 +62,8 @@ public class GameScreen implements Screen {
 	private FreeTypeFontParameter parameterPoint;
 	private BitmapFont fontTitle;
 	private BitmapFont fontPoint;
+	private String playerName="ZAV";
+	private int playerScore=10;
 	public static boolean aiPlays;
 
 	public GameScreen(PacManGame game, boolean aiPlays) {
@@ -121,8 +123,10 @@ public class GameScreen implements Screen {
 					encoding.addFilesPath(encondingPath + "utility.py");
 
 					handler.addProgram(encoding);
-
+					
+					System.out.println(facts);
 					Output output = handler.startSync();
+					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);
@@ -195,7 +199,7 @@ public class GameScreen implements Screen {
 			loading_dead++;
 		}
 		if (loading_dead >= 60)
-			;
+			game.swap(Constant.SCORESTATE,playerName,playerScore);
 		// JOptionPane.showMessageDialog(null, "hai perso");
 		drawWorld(delta);
 		if (world.isCompleted()) {

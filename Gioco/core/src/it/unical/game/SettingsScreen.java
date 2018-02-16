@@ -50,7 +50,7 @@ public class SettingsScreen implements Screen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setAIPlays(true);
-				game.swap(Constant.MENUSTATE);
+				game.swap(Constant.MENUSTATE,null,0);
 			}
 		});
 
@@ -61,7 +61,7 @@ public class SettingsScreen implements Screen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setAIPlays(false);
-				game.swap(Constant.MENUSTATE);
+				game.swap(Constant.MENUSTATE,null,0);
 			}
 		});
 

@@ -1,11 +1,9 @@
-%casella(X,Y).
-%moneta(X,Y,Tipo).
-%monetaPiuVicina(X,Y).
-%nemico(ID,Peso,X,Y).
-%distanza(T,ID,Distanza).
-%distanzaFisica(X,Y,X1,Y1,D).
+%casella(X,Y).		   		--> una generica casella percorribile eventualmente
+%moneta(X,Y,Tipo).     		--> una moneta con il tipo associato ("normale"/"speciale")
+%pacmanDLV(Tempo,X,Y). 		--> la posizione di pacman in un certo istante di tempo
+%monetaPiuVicina(X,Y). 		--> la moneta più vicina a pacman 
+%nemico(ID,Peso,X,Y).		--> un nemico con il suo Id, il peso che dipende dalla distanza da pacman e la sua posizione
 
-%pacmanDLV(0,1,8). moneta(1,1,"normale"). casella(1,1). casella(1,2). casella(1,3). casella(1,4). casella(1,5). casella(1,6). casella(1,7). casella(1,8). moneta(1,10,"normale"). casella(1,10). moneta(1,11,"normale"). casella(1,11). moneta(1,12,"normale"). casella(1,12). moneta(1,13,"normale"). casella(1,13). moneta(1,14,"normale"). casella(1,14). moneta(1,15,"normale"). casella(1,15). moneta(1,16,"normale"). casella(1,16). moneta(1,17,"normale"). casella(1,17). moneta(2,1,"normale"). casella(2,1). moneta(2,4,"normale"). casella(2,4). moneta(2,8,"normale"). casella(2,8). moneta(2,10,"normale"). casella(2,10). moneta(2,14,"normale"). casella(2,14). moneta(3,1,"speciale"). casella(3,1). moneta(3,2,"normale"). casella(3,2). moneta(3,3,"normale"). casella(3,3). moneta(3,4,"normale"). casella(3,4). moneta(3,5,"normale"). casella(3,5). moneta(3,6,"normale"). casella(3,6). moneta(3,7,"normale"). casella(3,7). moneta(3,8,"normale"). casella(3,8). moneta(3,9,"normale"). casella(3,9). moneta(3,10,"normale"). casella(3,10). moneta(3,11,"normale"). casella(3,11). moneta(3,12,"normale"). casella(3,12). moneta(3,13,"normale"). casella(3,13). moneta(3,14,"normale"). casella(3,14). moneta(3,15,"normale"). casella(3,15). moneta(4,4,"normale"). casella(4,4). moneta(4,6,"normale"). casella(4,6). moneta(4,12,"normale"). casella(4,12). moneta(4,14,"normale"). casella(4,14). moneta(5,3,"normale"). casella(5,3). moneta(5,4,"normale"). casella(5,4). moneta(5,6,"normale"). casella(5,6). moneta(5,7,"normale"). casella(5,7). moneta(5,8,"normale"). casella(5,8). moneta(5,10,"normale"). casella(5,10). moneta(5,11,"normale"). casella(5,11). moneta(5,12,"normale"). casella(5,12). casella(6,4). casella(6,8). casella(6,10). casella(7,6). casella(7,7). casella(7,8). casella(7,9). casella(7,10). casella(7,11). casella(8,6). casella(9,8). casella(9,9). monetaPiuVicina(2,8). nemico(1,4,7,11). nemico(2,5,8,6). nemico(3,6,7,7). nemico(4,7,7,8).
 
 %Guess sulle mosse possibili
 up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),T<7.
@@ -32,29 +30,32 @@ distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2>=X1,Y2<=
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
-:~ pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T<T1. [1@17,T]
+%vincolo per evitare di tornare due volte sulla stessa posizione
+:~ pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T<T1. [1@20,T]
 
-:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y). [1@16,ID]
-:~ distanzaCorrente(T,ID,D),D<=7. [1@16-D,ID,T]
+%paga se va su una posizione dove c'è un nemico
+:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y). [1@19,ID]
+
+%per ogni istante paga la distanza corrente da un dato nemico ad un livello che dipende dal peso di quel nemico
+:~ distanzaCorrente(T,ID,D),D<=7. [1@19-D,ID,T]
+
 %:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y1),Y>=Y1-4,Y<=Y1+4. [1@9,ID,T]
 %:~ pacmanDLV(T,X,Y),nemico(ID,_,X1,Y),X>=X1-4,X<=X1+4. [1@9,ID,T]
 
-%cerco di raggiungere la moneta speciale se ho urgenza
-:~urgenza(T),pacmanDLV(T+1,R,C),not moneta(R,C,speciale). [1@8,T,R,C]
-
-:~distanzaFinale(ID,D),nemico(ID,Peso,_,_). [200-D@Peso,ID]
-
-%distanzaMinimaNemico(ID,X):- #min{D : distanzaCorrente(T,ID,D)}=X,nemico(ID,_,_,_).
-%:~#min{X : distanzaMinimaNemico(ID,X)}=D. [100-D@3]
-
 %si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
 urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),X1>=X-3,Y1>=Y-3,X1<=X+3,Y1<=Y+3}!=0.
+
+%cerca di prendere la moneta speciale se ha urgenza
+:~urgenza(T),pacmanDLV(T+1,R,C),not moneta(R,C,speciale). [1@11,T,R,C]
+
+%paga la distanza finale da un nemico ad un livello che dipende dal peso di quel nemico
+:~distanzaFinale(ID,D),nemico(ID,Peso,_,_). [200-D@Peso,ID]
 
 % aggiornamento delle monete raccolte
 raccoltaMonetaNormale(T,X,Y):- pacmanDLV(T,X,Y),moneta(X,Y,"normale").
 raccoltaMonetaNormale(T+1,X,Y):-raccoltaMonetaNormale(T,X,Y),T<7.
 
-%pago se non raccolgo monete normali.
+%paga se non raccoglie monete normali.
 :~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@2,T,X,Y]
 :~ pacmanDLV(T,X,Y), raccoltaMonetaNormale(T-1,X,Y). [1@2,T,X,Y]
 
@@ -63,45 +64,6 @@ distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2>=X
 distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanzaPacmanMonetaVicina(D) :- monetaPiuVicina(X1,Y1),pacmanDLV(7,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
-%se non raccolgo la moneta piu vicina, minimizzo la distanza
+%se non raccoglie la moneta piu vicina, minimizza la distanza
 monetaPiuVicinaRaccolta :- raccoltaMonetaNormale(_,X,Y),monetaPiuVicina(X,Y).
 :~ distanzaPacmanMonetaVicina(D),not monetaPiuVicinaRaccolta. [D@1]
-
-
-
-
-
-
-
-
-
-
-
-
-%aggiorna distanze al l'istante T
-%distanza(T,ID,D):-pacmanDLV(T,X,Y),nemico(ID,_,X1,Y1),&calcolaDistanza(X,Y,X1,Y1:D).
-
-%massimizza la distanza dal nemico più vicino
-%:~distanza(T,ID,D),distanza(T-1,ID,D1),D<D1,nemico(ID,P,_,_). [1@P,ID,T]
-
-%calcola il range di caselle che descrivono un intorno
-%intorno(X,Y,X1,Y1):-casella(X,Y),casella(X1,Y1), X1>=X-2, X1<=X+2,Y1>=Y-2, Y1<=Y+2.
-
-%si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
-%urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),intorno(X,Y,X1,Y1)}>2.
-
-%cerco di raggiungere la moneta speciale se ho urgenza
-%:~urgenza(T),moneta(R,C,speciale,P),pacmanDLV(T,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(T+1,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [1@P,T,R,C] %1 perchè mi muovo al più di una mossa
-
-%su un livello minore cerco di avvicinarmi a qualche moneta normale
-%:~moneta(R,C,normale,P),pacmanDLV(0,X,Y),&distanza(X,Y,R,C;D),pacmanDLV(7,X1,Y1),&distanza(X1,Y1,R,C;D1),D1>D. [D1-D@P,R,C]
-
-%massimizzo il numero di monete raccolte
-%pesoMax(L):-L=#max{P: moneta(X,Y,normale,P)}.
-%monetaRaccolta(X,Y):-moneta(X,Y,normale,_),pacmanDLV(_,X,Y).
-%:-moneta(X,Y,normale,_),not monetaRaccolta(X,Y),pesoMax(L). [1@L+1,X,Y]
-%pesi 
-%nemici -> livello maggiore
-%moneteSpeciali -> livello medio
-%moneteRaccolte > monete vicine
-%monete Vicine pesi pù bassi

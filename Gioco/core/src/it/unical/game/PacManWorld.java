@@ -1,6 +1,7 @@
 package it.unical.game;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -15,7 +16,6 @@ import it.unical.inputobject.raccoglimonete.MonetaVicina;
 import it.unical.inputobject.scappadalnemico.Nemico;
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
-import it.unical.object.Bonus;
 import it.unical.object.Coin;
 import it.unical.object.Collectable;
 import it.unical.object.Ghost;
@@ -29,7 +29,6 @@ public class PacManWorld {
 	private ArrayList<Ghost> ghosts;
 	private PacMan pacman;
 	private ArrayList<Coin> coins; // mettere nella matrice
-	private ArrayList<Bonus> bonus; // mettere nella matrice
 	private int is_crossable[][];
 	private int level;
 	private int point;
@@ -40,14 +39,18 @@ public class PacManWorld {
 		this.point = point;
 		int speed_ghost = 30;
 
-		this.ghosts.add(new Ghost(9, 10, 3, speed_ghost + level));
-		this.ghosts.add(new Ghost(9, 9, 1, speed_ghost + level));
-		this.ghosts.add(new Ghost(9, 8, 0, speed_ghost + level));
-		this.ghosts.add(new Ghost(8, 9, 2, speed_ghost + level));
+		this.ghosts.add(new Ghost(9, 10, 3, speed_ghost + level % 10));
+		this.ghosts.add(new Ghost(9, 9, 1, speed_ghost + level % 10));
+		this.ghosts.add(new Ghost(9, 8, 0, speed_ghost + level % 10));
+		this.ghosts.add(new Ghost(8, 9, 2, speed_ghost + level % 10));
+		Random random = new Random();
+
+		for (int i = 0; i < level / 10; i++) {
+			this.ghosts.add(new Ghost(19, 17-i, random.nextInt(4), speed_ghost + level % 10));
+		}
 		this.level = level;
 
 		this.coins = new ArrayList<Coin>();
-		this.bonus = new ArrayList<Bonus>();
 		this.pacman = new PacMan(1, 1, this);
 		this.is_crossable = new int[21][19];
 		for (int i = 0; i < 21; i++)
@@ -275,14 +278,6 @@ public class PacManWorld {
 		this.coins = coins;
 	}
 
-	public ArrayList<Bonus> getBonus() {
-		return bonus;
-	}
-
-	public void setBonus(ArrayList<Bonus> bonus) {
-		this.bonus = bonus;
-	}
-
 	public void remove_coin(int logic_x, int logic_y) {
 		ArrayList<Coin> remove_coin = new ArrayList<Coin>();
 		for (Coin coin : coins)
@@ -319,7 +314,7 @@ public class PacManWorld {
 	}
 
 	public boolean isCompleted() {
-		return coins.size() + bonus.size() == 0;
+		return coins.size() == 0;
 	}
 
 	public void pacmanPicked(int COIN) {
@@ -340,7 +335,6 @@ public class PacManWorld {
 			int distance = (int) pacman.getRemainingTimeSpecial() / (25 * level + 50);
 
 			boolean found = false;
-			System.out.println("aaaaaaa" + distance + "aaaaa");
 			if (distance >= 7) {
 				for (Ghost ghost : ghosts) {
 					if (Constant.distanza(pacmanPosition,
@@ -422,7 +416,7 @@ public class PacManWorld {
 					returnValue.addObjectInput(nearestEnemy);
 				}
 				returnValue.addObjectInput(new NumeroMosseMassimo(
-						Math.min(7, (int) pacman.getRemainingTimeSpecial() / ((25 * level) + 50))));
+						Math.min(7, (int) pacman.getRemainingTimeSpecial() / ((25 * (level%10)) + 50))));
 
 			} else if (program.equals("scappaDalNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
@@ -482,7 +476,6 @@ public class PacManWorld {
 			try {
 				returnValue.addObjectInput(new Nemico(i, 3 + i, ghost.getLogic_x(), ghost.getLogic_y()));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

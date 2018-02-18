@@ -1,8 +1,9 @@
-%casella(X,Y).
-%moneta(X,Y,Tipo).
-%pacman(X,Y).
-%nemicoPiuVicino(X,Y).
-%numeroMosseMassimo(X).
+%MODELLO INPUT
+%casella(X,Y).		   --> una generica casella percorribile eventualmente
+%moneta(X,Y,Tipo).     --> una moneta con il tipo associato ("normale"/"speciale")
+%pacmanDLV(Tempo,X,Y). --> la posizione di pacman in un certo istante di tempo
+%nemicoPiuVicino(X,Y). --> il nemico più vicino che pacman deve provare a raggiungere
+%numeroMosseMassimo(X) --> il numero massimo di mosse che verranno generate
 
 %Guess sulle mosse possibili
 up(T)|down(T)|right(T)|left(T):-pacmanDLV(T,X,Y),not raggiunto(T),numeroMosseMassimo(K),T<K.
@@ -13,14 +14,16 @@ distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X
 distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2<=X1,Y2>=Y1,D1=X1-X2,D2=Y2-Y1,D=D1+D2.
 distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),X2<=X1,Y2<=Y1,D1=X1-X2,D2=Y1-Y2,D=D1+D2.
 
-%distanza(D) :- nemicoPiuVicino(X1,Y1),pacmanDLV(7,X2,Y2),&distanza(X1,Y1,X2,Y2;D).
+%distanza con python
+%distanza(D) :- nemicoPiuVicino(X1,Y1),numeroMosseMassimo(K),pacmanDLV(K,X2,Y2),&distanza(X1,Y1,X2,Y2;D).
 
-%si paga per ogni volta che si ritorna su una posizione gia visitata
+%paga per ogni volta che ritorna su una posizione già visitata
 :~ pacmanDLV(T,X,Y),pacmanDLV(T1,X,Y),T<T1. [1@5,T]
 
+%se non raggiunge il nemico, paga la distanza in modo da minimizzarla
 :~ not raggiuntoNemico, distanza(D). [D@4]
 
-%pago per quanto impiego a raggiungerlo
+%se lo raggiunge, pago per quanto impiega a raggiungerlo
 raggiunto(T) :- pacmanDLV(T,X,Y),nemicoPiuVicino(X,Y).
 :~ raggiunto(T). [T@3]
 
@@ -36,5 +39,6 @@ pacmanDLV(T+1,X+1,Y):-down(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y-1):-left(T),pacmanDLV(T,X,Y).
 pacmanDLV(T+1,X,Y+1):-right(T),pacmanDLV(T,X,Y).
 
+%paga a livello 2 se non raccoglie monete normali, a livello 1 se non raccoglie monete speciali
 :~ pacmanDLV(T,X,Y), not moneta(X,Y,"normale"). [1@2,T,X,Y]
 :~ pacmanDLV(T,X,Y), not moneta(X,Y,"speciale"). [1@1,T,X,Y]

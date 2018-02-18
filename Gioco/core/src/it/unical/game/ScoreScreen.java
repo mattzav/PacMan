@@ -38,23 +38,28 @@ public class ScoreScreen implements Screen {
 	private SpriteBatch batch;
 	private Stage stage;
 
-	private int score[];
+	private int scores[];
 	private String players[];
+	private int[] levels;
 	private String playerName;
 	private int playerScore;
+	private int level;
 	private HashMap<Integer, BitmapFont> font_position;
 	private Vector2 pacmanDirection;
 	private Vector2 pacmanPosition;
+	private Vector2 ghostDirection;
+	private Vector2 ghostPosition;
 	private int colour;
 	private float animation;
 
 	private BufferedReader reader;
 	private PrintWriter writer;
 
-	public ScoreScreen(PacManGame game, String playerName, int playerScore) throws IOException {
+	public ScoreScreen(PacManGame game, String playerName, int playerScore, int level) throws IOException {
 		this.game = game;
 		this.colour = 2;
 		this.animation = 0;
+		this.level=level;
 		generator1 = new FreeTypeFontGenerator(Gdx.files.internal("font/arcade.ttf"));
 
 		batch = new SpriteBatch();
@@ -66,11 +71,14 @@ public class ScoreScreen implements Screen {
 
 		this.playerName = playerName;
 		this.playerScore = playerScore;
-		this.score = new int[10];
+		this.scores = new int[10];
 		this.players = new String[10];
+		this.levels = new int[10];
 		this.font_position = new HashMap();
 		this.pacmanDirection = new Vector2(1, 0);
 		this.pacmanPosition = new Vector2(15, 495);
+		this.ghostDirection = new Vector2(1, 0);
+		this.ghostPosition = new Vector2(45, 495);
 
 		reader = new BufferedReader(new FileReader("assets/bestScore.txt"));
 
@@ -78,9 +86,9 @@ public class ScoreScreen implements Screen {
 			String line;
 			try {
 				line = reader.readLine();
-				System.out.println(line);
 				players[i] = line.substring(0, line.indexOf(";"));
-				score[i] = Integer.valueOf(line.substring(line.indexOf(";") + 1, line.length()));
+				scores[i] = Integer.valueOf(line.substring(line.indexOf(";") + 1, line.indexOf(":")));
+				levels[i] = Integer.valueOf(line.substring(line.indexOf(":") + 1, line.length()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -90,24 +98,26 @@ public class ScoreScreen implements Screen {
 		writer = new PrintWriter(new FileWriter("assets/bestScore.txt"));
 		int index = -1;
 		for (int i = 0; i < 10; i++) {
-			if (score[i] > playerScore)
+			if (scores[i] > playerScore)
 				continue;
 			index = i;
 			break;
 		}
 		if (index != -1) {
 			for (int i = 9; i > index; i--) {
-				score[i] = score[i - 1];
+				scores[i] = scores[i - 1];
 				players[i] = players[i - 1];
+				levels[i] = levels[i - 1];
 			}
 		}
 
 		if (index != -1) {
-			score[index] = playerScore;
+			scores[index] = playerScore;
 			players[index] = playerName;
+			levels[index] = level;
 		}
 		for (int i = 0; i < 10; i++)
-			writer.println(players[i] + ";" + score[i]);
+			writer.println(players[i] + ";" + scores[i]+":"+levels[i]);
 		writer.flush();
 
 		FreeTypeFontParameter parameter;
@@ -135,31 +145,37 @@ public class ScoreScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.draw(getImage(), pacmanPosition.x, pacmanPosition.y);
-		batch.draw(getGhostImage(), pacmanPosition.x + pacmanDirection.x * 40,
-				pacmanPosition.y - pacmanDirection.y * 40);
-		font_position.get(Integer.valueOf(10)).draw(batch, "THE 10 BEST PLAYERS", 125, 450);
-		font_position.get(Integer.valueOf(10)).draw(batch, "HIGH SCORE " + score[0], 145, 495);
+		batch.draw(getGhostImage(), ghostPosition.x, ghostPosition.y);
+		font_position.get(Integer.valueOf(10)).draw(batch, "THE 10 BEST PLAYERS", 125, 445);
+		font_position.get(Integer.valueOf(10)).draw(batch, "HIGH SCORE " + scores[0], 145, 495);
 
+		font_position.get(Integer.valueOf(10)).draw(batch, "RANK", 50, 395);
+		font_position.get(Integer.valueOf(10)).draw(batch, "NAME", 165, 395);
+		font_position.get(Integer.valueOf(10)).draw(batch, "SCORE", 350, 395);
+		font_position.get(Integer.valueOf(10)).draw(batch, "LEVEL", 445, 395);
+
+		
 		for (int i = 0; i < 10; i++) {
 			BitmapFont font = font_position.get(Integer.valueOf(i));
-			font.draw(batch, String.valueOf(i + 1) + "ST", 110, 400 - 30 * i);
-			if (players[i].equals(playerName) && score[i] == playerScore)
-				font.draw(batch, "YOU!", 40, 400 - 30 * i);
-			font.draw(batch, players[i], 235, 400 - 30 * i);
-			font.draw(batch, String.valueOf(score[i]), 435, 400 - 30 * i);
+			font.draw(batch, String.valueOf(i + 1) + "ST", 50, 360 - 30 * i);
+			if (players[i].equals(playerName) && scores[i] == playerScore && level==levels[i])
+				font.draw(batch, "->", 20, 360 - 30 * i);
+			font.draw(batch, players[i], 165, 360 - 30 * i);
+			font.draw(batch, String.valueOf(scores[i]), 350, 360 - 30 * i);
+			font.draw(batch, String.valueOf(levels[i]), 465, 360 - 30 * i);
 		}
 		batch.end();
 	}
 
 	private Texture getGhostImage() {
 		int row = 1;
-		if (pacmanDirection.equals(Constant.SX))
+		if (ghostDirection.equals(Constant.SX))
 			row = 3;
-		else if (pacmanDirection.equals(Constant.DX))
+		else if (ghostDirection.equals(Constant.DX))
 			row = 1;
-		else if (pacmanDirection.equals(Constant.UP))
+		else if (ghostDirection.equals(Constant.UP))
 			row = 2;
-		else if (pacmanDirection.equals(Constant.DOWN))
+		else if (ghostDirection.equals(Constant.DOWN))
 			row = 0;
 		return Constant.ghost[colour][row];
 
@@ -170,33 +186,37 @@ public class ScoreScreen implements Screen {
 		animation %= 2;
 		if (pacmanPosition.x + pacmanDirection.x * 2 >= 500 || pacmanPosition.y - pacmanDirection.y * 2 >= 500
 				|| pacmanPosition.x + pacmanDirection.x * 2 <= 10 || pacmanPosition.y - pacmanDirection.y * 2 <= 10) {
-			updateDirection();
-			Random random = new Random();
-			int startColour = colour;
-			while (startColour == colour)
-				colour = random.nextInt(4);
+			updateDirection(pacmanDirection);
 		} else {
 			pacmanPosition.x += pacmanDirection.x * 2;
 			pacmanPosition.y -= pacmanDirection.y * 2;
 		}
+
+		if (ghostPosition.x + ghostDirection.x * 2 >= 500 || ghostPosition.y - ghostDirection.y * 2 >= 500
+				|| ghostPosition.x + ghostDirection.x * 2 <= 10 || ghostPosition.y - ghostDirection.y * 2 <= 10) {
+			updateDirection(ghostDirection);
+		} else {
+			ghostPosition.x += ghostDirection.x * 2;
+			ghostPosition.y -= ghostDirection.y * 2;
+		}
 	}
 
-	private void updateDirection() {
-		if (pacmanDirection.x == 0)
-			if (pacmanDirection.y == 1) {
-				pacmanDirection.y = 0;
-				pacmanDirection.x = -1;
+	private void updateDirection(Vector2 direction) {
+		if (direction.x == 0)
+			if (direction.y == 1) {
+				direction.y = 0;
+				direction.x = -1;
 			} else {
-				pacmanDirection.y = 0;
-				pacmanDirection.x = 1;
+				direction.y = 0;
+				direction.x = 1;
 			}
-		else if (pacmanDirection.y == 0)
-			if (pacmanDirection.x == 1) {
-				pacmanDirection.x = 0;
-				pacmanDirection.y = 1;
+		else if (direction.y == 0)
+			if (direction.x == 1) {
+				direction.x = 0;
+				direction.y = 1;
 			} else {
-				pacmanDirection.x = 0;
-				pacmanDirection.y = -1;
+				direction.x = 0;
+				direction.y = -1;
 			}
 
 	}

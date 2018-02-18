@@ -62,12 +62,12 @@ public class GameScreen implements Screen {
 	private FreeTypeFontParameter parameterPoint;
 	private BitmapFont fontTitle;
 	private BitmapFont fontPoint;
-	private String playerName="ZAV";
-	private int playerScore=10;
+	private String playerName;
+	private int playerScore;
 	public static boolean aiPlays;
 
-	public GameScreen(PacManGame game, boolean aiPlays) {
-
+	public GameScreen(PacManGame game, boolean aiPlays,String playerName) {
+		this.playerName=playerName;
 		this.game = game;
 		this.aiPlays = aiPlays;
 		batch = new SpriteBatch();
@@ -106,27 +106,32 @@ public class GameScreen implements Screen {
 					world.updatePlayerNextDirection(Constant.DX);
 			} else {
 				
+					// se abbiamo invocato raccogli monete ed ora dovremmo invocare scappa dal nemico, eliminiamo le mosse rimaste e richiamiamo dlv
 					if(encondingName.equals("raccogliMonete") && world.getOptimalProgram().equals("scappaDalNemico"))
 						world.getPacman().getSteps().clear();
 						
+					// se pacman non ha piu mosse invochiamo dlv
 					if (!world.getPacman().hasMoreSteps() && world.getPacman().getInter_box() == 0.f) {
 
 					// valutare se aggiungere programma dlv che dicide quale programma lanciare
+					
+					//prendiamo il nome del programma adatto alla situazione attuale	
 					encondingName = world.getOptimalProgram();
+					
 					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
-
+					
+					// costruiamo i fatti in base al programma da invocare
 					facts = world.getInputFacts(encondingName);
+					
 					handler.addProgram(facts);
 					
 					encoding = new ASPInputProgram();
 					encoding.addFilesPath(encondingPath + encondingName);
-					encoding.addFilesPath(encondingPath + "utility.py");
+					//encoding.addFilesPath(encondingPath + "utility.py");
 
 					handler.addProgram(encoding);
 					
-					System.out.println(facts);
 					Output output = handler.startSync();
-					System.out.println(output.getOutput());
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
 					steps.add(0, null);
@@ -157,6 +162,8 @@ public class GameScreen implements Screen {
 
 						
 						if (!encondingName.equals("scappaDalNemico")) {
+							// lasttime ci dice in che istante abbiamo preso l'ultima moneta
+							//le altre mosse non servono
 							if (lastTime != -1 && encondingName.equals("raccogliMonete"))
 								for (int i = 0; i < lastTime && i<4; i++)
 									world.getPacman().getSteps().add(steps.get(i));
@@ -178,6 +185,8 @@ public class GameScreen implements Screen {
 					}
 
 				}
+					
+				// se pacman ha ancora mosse prendiamo la seguente e calcoliamo la prossima direzione
 				if (world.getPacman().getInter_box() == 0 && !world.getPacman().getSteps().isEmpty()) {
 
 					ArrayList<Position> pacmanSteps = world.getPacman().getSteps();
@@ -199,9 +208,10 @@ public class GameScreen implements Screen {
 			loading_dead++;
 		}
 		if (loading_dead >= 60)
-			game.swap(Constant.SCORESTATE,playerName,playerScore);
-		// JOptionPane.showMessageDialog(null, "hai perso");
+			game.swap(Constant.SCORESTATE,playerName,world.getPoint(),world.getLevel());
+
 		drawWorld(delta);
+		
 		if (world.isCompleted()) {
 			world = new PacManWorld(world.getLevel() + 1,world.getPoint());
 		}
@@ -213,7 +223,6 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.draw(Constant.maze, 0, 0);
-		batch.draw(Constant.icon, 495, 0);
 		fontTitle.draw(batch, "CRYPTOPACMAN", 25, 525);
 		for (Coin coin : world.getCoins())
 			batch.draw(coin.getImage(delta), coin.getLogic_y() * Constant.box_size,
@@ -227,8 +236,12 @@ public class GameScreen implements Screen {
 			batch.draw(ghost.getImage(pacman.isSpecial()),
 					ghost.getLogic_y() * Constant.box_size + ghost.getInter_box() * ghost.getDirection().y,
 					400 - ghost.getLogic_x() * Constant.box_size - ghost.getInter_box() * ghost.getDirection().x);
-		fontPoint.draw(batch, "PUNTI:", 400, 425);
+		fontPoint.draw(batch, "SCORE:", 400, 425);
 		fontPoint.draw(batch, String.valueOf(world.getPoint()), 420, 395);
+		
+		fontPoint.draw(batch, "LEVEL:", 400, 225);
+		fontPoint.draw(batch, String.valueOf(world.getLevel()), 420, 195);
+		
 		batch.end();
 	}
 

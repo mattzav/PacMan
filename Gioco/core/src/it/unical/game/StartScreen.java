@@ -38,7 +38,7 @@ public class StartScreen implements Screen{
 		start.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				game.swap(Constant.GAMESTATE,null,0);
+				game.swap(Constant.SETTINGSTATE,null,0,0);
 			}
 		});
 	
@@ -49,7 +49,7 @@ public class StartScreen implements Screen{
 		settings.addListener(new ChangeListener() {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
-	            game.swap(Constant.SETTINGSTATE,null,0);
+	          
 	        }
 	    });
 		

@@ -16,7 +16,7 @@ public class PacManGame extends Game {
 
 	private GameScreen game;
 	private StartScreen menu;
-	private SettingsScreen settings;
+	private ChooseParamScreen chooseParam;
 	private ScoreScreen score;
 	private boolean aiPlays;
 
@@ -24,23 +24,22 @@ public class PacManGame extends Game {
 	public void create() {
 		aiPlays = true;
 		menu = new StartScreen(this);
-		game = new GameScreen(this, true);
-		settings = new SettingsScreen(this);
+		chooseParam = new ChooseParamScreen(this);
 		
 		setScreen(menu);
 	}
 
-	public void swap(int state, String player, int playerScore) {
+	public void swap(int state, String player, int playerScore,int level) {
 		if (state == Constant.MENUSTATE)
 			setScreen(menu);
 		else if (state == Constant.GAMESTATE) {
-			game.setAIPlays(aiPlays);
+			game = new GameScreen(this, aiPlays,chooseParam.getPlayerName());
 			setScreen(game);
 		} else if (state == Constant.SETTINGSTATE)
-			setScreen(settings);
+			setScreen(chooseParam);
 		else if (state == Constant.SCORESTATE) {
 			try {
-				score = new ScoreScreen(this, player, playerScore);
+				score = new ScoreScreen(this, player, playerScore,level);
 				setScreen(score);
 			} catch (IOException e) {
 				e.printStackTrace();

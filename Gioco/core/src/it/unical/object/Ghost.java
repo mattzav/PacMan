@@ -176,7 +176,6 @@ public class Ghost {
 						max_distance = pacman_vector.dst(Constant.corners[i]);
 						greedy_corners = Constant.corners[i];
 					}
-				System.out.println(greedy_corners.x + " " + greedy_corners.y);
 				FindPath.getInstance().printEscapeRoute(ghost_position,
 						new Position((int) greedy_corners.x, (int) greedy_corners.y), pathposition,
 						Constant.distanza(ghost_position, pacman_position),

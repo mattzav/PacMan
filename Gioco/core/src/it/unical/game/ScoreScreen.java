@@ -74,7 +74,7 @@ public class ScoreScreen implements Screen {
 		this.scores = new int[10];
 		this.players = new String[10];
 		this.levels = new int[10];
-		this.font_position = new HashMap();
+		this.font_position = new HashMap<>();
 		this.pacmanDirection = new Vector2(1, 0);
 		this.pacmanPosition = new Vector2(15, 495);
 		this.ghostDirection = new Vector2(1, 0);
@@ -146,23 +146,24 @@ public class ScoreScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.draw(getImage(), pacmanPosition.x, pacmanPosition.y);
 		batch.draw(getGhostImage(), ghostPosition.x, ghostPosition.y);
-		font_position.get(Integer.valueOf(10)).draw(batch, "THE 10 BEST PLAYERS", 125, 445);
+		font_position.get(Integer.valueOf(10)).draw(batch, "TOP 10 PLAYERS", 175, 415);
 		font_position.get(Integer.valueOf(10)).draw(batch, "HIGH SCORE " + scores[0], 145, 495);
-
-		font_position.get(Integer.valueOf(10)).draw(batch, "RANK", 50, 395);
-		font_position.get(Integer.valueOf(10)).draw(batch, "NAME", 165, 395);
-		font_position.get(Integer.valueOf(10)).draw(batch, "SCORE", 350, 395);
-		font_position.get(Integer.valueOf(10)).draw(batch, "LEVEL", 445, 395);
+		font_position.get(Integer.valueOf(10)).draw(batch, "YOUR SCORE " + playerScore, 145, 465);
+		
+		font_position.get(Integer.valueOf(10)).draw(batch, "RANK", 45, 365);
+		font_position.get(Integer.valueOf(10)).draw(batch, "NAME", 160, 365);
+		font_position.get(Integer.valueOf(10)).draw(batch, "SCORE", 330, 365);
+		font_position.get(Integer.valueOf(10)).draw(batch, "LEVEL", 440, 365);
 
 		
 		for (int i = 0; i < 10; i++) {
 			BitmapFont font = font_position.get(Integer.valueOf(i));
-			font.draw(batch, String.valueOf(i + 1) + "ST", 50, 360 - 30 * i);
+			font.draw(batch, String.valueOf(i + 1) + "ST", 45, 330 - 30 * i);
 			if (players[i].equals(playerName) && scores[i] == playerScore && level==levels[i])
-				font.draw(batch, "->", 20, 360 - 30 * i);
-			font.draw(batch, players[i], 165, 360 - 30 * i);
-			font.draw(batch, String.valueOf(scores[i]), 350, 360 - 30 * i);
-			font.draw(batch, String.valueOf(levels[i]), 465, 360 - 30 * i);
+				font.draw(batch, "->", 20, 330 - 30 * i);
+			font.draw(batch, players[i], 140, 330 - 30 * i);
+			font.draw(batch, String.valueOf(scores[i]), 325, 330 - 30 * i);
+			font.draw(batch, String.valueOf(levels[i]), 460, 330 - 30 * i);
 		}
 		batch.end();
 	}

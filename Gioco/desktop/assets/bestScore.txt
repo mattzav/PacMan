@@ -1,10 +1,10 @@
+Intelligence;164050:19
+AiNewTest;138950:17
 TESTLAST;120400:15
 TESTAIGHOST;104000:13
 AITESTER;53550:7
+Michele;9800:2
 Giuseppe;8950:2
-Pierino;1200:1
-Angelo;1150:1
-Luca;750:1
-Simona;550:1
-Paolo;550:1
-Nicholas;550:1
+Luigi;3050:1
+A;2850:1
+Player;2850:1

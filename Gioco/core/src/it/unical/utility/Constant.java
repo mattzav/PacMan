@@ -27,7 +27,7 @@ public class Constant {
 	public static String path = "img/";
 
 	public static Texture maze = new Texture(path + "maze.png");
-	public static Texture coin = new Texture(path + "moneta.png");
+	public static Texture coin = new Texture(path + "coin.png");
 	public static Texture starting = new Texture(path + "starting-.jpg");
 	public static Texture title = new Texture(path + "image.png");
 	public static Texture icon = new Texture(path + "icon.png");

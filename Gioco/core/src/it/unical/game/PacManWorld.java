@@ -32,11 +32,13 @@ public class PacManWorld {
 	private int is_crossable[][];
 	private int level;
 	private int point;
+	private int life;
 
-	public PacManWorld(int level, int point) {
+	public PacManWorld(int level, int point,int life) {
 
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = point;
+		this.life = life;
 		int speed_ghost = 30;
 
 		this.ghosts.add(new Ghost(9, 10, 3, speed_ghost + level % 10));
@@ -529,5 +531,13 @@ public class PacManWorld {
 		if (nearestCoin == null)
 			return null;
 		return new MonetaVicina(nearestCoin.getLogic_x(), nearestCoin.getLogic_y());
+	}
+	
+	public int getLife() {
+		return life;
+	}
+	
+	public void setLife(int life) {
+		this.life = life;
 	}
 }

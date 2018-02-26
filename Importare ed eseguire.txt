@@ -1,0 +1,14 @@
+ISTRUZIONI PER IMPORTARE ED ESEGUIRE IL PROGETTO
+
+1) Estrarre il progetto dalla cartella zippata
+
+2) Da eclipse File -> Import -> Gradle -> Existing Gradle Project -> selezionare
+   la cartella dove è stato estratto il progetto -> next -> Override workspace settings
+   e selezionare come specific Gradle version la 4.5 -> Finish
+
+3) Nel core e nel desktop c'è una cartella "lib". Da eclipse aprire la cartella ->
+   tasto destro su embasp -> build path -> add to build path (ripetere l'operazione sia nel core che nel desktop)
+
+4) Nel desktop c'è una cartella "assets". Tasto destro sulla cartella -> build path -> use as source folder
+
+5) Per eseguire. desktop -> src -> it.unical.game.desktop -> DesktopLauncher (tasto destro -> run as java application)  

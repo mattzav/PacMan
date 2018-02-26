@@ -1,3 +1,4 @@
+%MODELLO INPUT
 %casella(X,Y).		   		--> una generica casella percorribile eventualmente
 %moneta(X,Y,Tipo).     		--> una moneta con il tipo associato ("normale"/"speciale")
 %pacmanDLV(Tempo,X,Y). 		--> la posizione di pacman in un certo istante di tempo
@@ -38,9 +39,6 @@ distanzaCorrente(T,ID,D) :- nemico(ID,Peso,X1,Y1),pacmanDLV(T,X2,Y2),X2<=X1,Y2<=
 
 %per ogni istante paga la distanza corrente da un dato nemico ad un livello che dipende dal peso di quel nemico
 :~ distanzaCorrente(T,ID,D),D<=7. [1@19-D,ID,T]
-
-%:~ pacmanDLV(T,X,Y),nemico(ID,_,X,Y1),Y>=Y1-4,Y<=Y1+4. [1@9,ID,T]
-%:~ pacmanDLV(T,X,Y),nemico(ID,_,X1,Y),X>=X1-4,X<=X1+4. [1@9,ID,T]
 
 %si ha un'urgenza se ci sono più di 2 nemici intorno a pacman all'istante T
 urgenza(T):-pacmanDLV(T,X,Y),#count{ID: nemico(ID,_,X1,Y1),X1>=X-3,Y1>=Y-3,X1<=X+3,Y1<=Y+3}!=0.

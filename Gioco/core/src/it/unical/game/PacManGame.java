@@ -2,6 +2,8 @@ package it.unical.game;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +20,8 @@ public class PacManGame extends Game {
 	private StartScreen menu;
 	private ChooseParamScreen chooseParam;
 	private ScoreScreen score;
+	private SettingsScreen info;
+
 	private boolean aiPlays;
 
 	@Override
@@ -25,6 +29,7 @@ public class PacManGame extends Game {
 		aiPlays = true;
 		menu = new StartScreen(this);
 		chooseParam = new ChooseParamScreen(this);
+		info = new SettingsScreen(this);
 		
 		setScreen(menu);
 	}
@@ -38,6 +43,15 @@ public class PacManGame extends Game {
 		} else if (state == Constant.SETTINGSTATE)
 			setScreen(chooseParam);
 		else if (state == Constant.SCORESTATE) {
+			
+//			if(0==JOptionPane.showConfirmDialog(null, "Complimenti "+player+" , hai totalizzato "+playerScore+" punti. Vuoi giocare ancora?"))
+//			{
+//				game = new GameScreen(this, aiPlays, chooseParam.getPlayerName());
+//				setScreen(game);
+//			}
+//			else {
+//				System.exit(0);
+//			}
 			try {
 				score = new ScoreScreen(this, player, playerScore,level);
 				setScreen(score);
@@ -45,6 +59,8 @@ public class PacManGame extends Game {
 				e.printStackTrace();
 			}
 		}
+		else if (state == Constant.INFOSTATE)
+			setScreen(info);
 	}
 
 	@Override

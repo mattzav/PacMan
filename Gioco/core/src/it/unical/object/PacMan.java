@@ -9,7 +9,8 @@ import com.badlogic.gdx.utils.CharArray;
 
 import it.unical.game.GameScreen;
 import it.unical.game.PacManWorld;
-import it.unical.provaIA.Position;
+import it.unical.game.SettingsScreen;
+import it.unical.ghostAI.Position;
 import it.unical.utility.Constant;
 
 public class PacMan {
@@ -79,11 +80,11 @@ public class PacMan {
 	public boolean isSpecial() {
 		return isSpecial;
 	}
-	
+
 	public Vector2 getPhysicalPosition() {
-		return new Vector2(logic_x*20+inter_box*direction.x,logic_y*20+inter_box*direction.y);
+		return new Vector2(logic_x * 20 + inter_box * direction.x, logic_y * 20 + inter_box * direction.y);
 	}
-	
+
 	public void setNextDirection(Vector2 next_direction) {
 		this.next_direction.x = next_direction.x;
 		this.next_direction.y = next_direction.y;
@@ -127,7 +128,7 @@ public class PacMan {
 		if (direction.x == 0 && direction.y == 0)
 			return;
 
-		inter_box += delta * speed ;
+		inter_box += delta * speed;
 
 		if (inter_box >= Constant.box_size + 2) {
 
@@ -140,13 +141,17 @@ public class PacMan {
 					isSpecial = true;
 					startTimeSpecial = System.currentTimeMillis();
 					world.pacmanPicked(Constant.SPECIALCOIN);
-					Constant.pacman_eatfruit.play();
+
+					if (SettingsScreen.musicEnabled)
+						Constant.pacman_eatfruit.play();
 				}
 
 				is_crossable[logic_x][logic_y] = Constant.FREE;
 				world.pacmanPicked(Constant.COIN);
 				world.remove_coin(logic_x, logic_y);
-				Constant.pacman_pick_money.play();
+
+				if (SettingsScreen.musicEnabled)
+					Constant.pacman_pick_money.play();
 			}
 			inter_box = 0.f;
 

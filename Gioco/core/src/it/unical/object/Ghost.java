@@ -9,12 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Queue;
 
+import it.unical.ghostAI.FindPath;
+import it.unical.ghostAI.Position;
 import it.unical.mat.embasp.languages.Id;
-import it.unical.provaIA.FindPath;
-import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
-@Id("nemico")
 public class Ghost {
 
 	private int logic_x;
@@ -118,10 +117,10 @@ public class Ghost {
 			if (!pacman.isSpecial()) {
 
 				// se entra nel raggio di 7 caselle lo insegue
-				if (Constant.distanza(pacman_position, ghost_position) < 7
+				if (Constant.distance(pacman_position, ghost_position) < 7
 						|| (lastdirection.x == 0 && lastdirection.y == 0)) {
 					FindPath.getInstance().printPath(ghost_position, pacman_position, pathposition,
-							Constant.distanza(ghost_position, pacman_position));
+							Constant.distance(ghost_position, pacman_position));
 					for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
 
 						next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));
@@ -178,8 +177,8 @@ public class Ghost {
 					}
 				FindPath.getInstance().printEscapeRoute(ghost_position,
 						new Position((int) greedy_corners.x, (int) greedy_corners.y), pathposition,
-						Constant.distanza(ghost_position, pacman_position),
-						Constant.distanza(ghost_position, new Position((int) greedy_corners.x, (int) greedy_corners.y)),
+						Constant.distance(ghost_position, pacman_position),
+						Constant.distance(ghost_position, new Position((int) greedy_corners.x, (int) greedy_corners.y)),
 						pacman_position);
 				for (int i = 1; i < 4 + colour && i < pathposition.size(); i++)
 					next_position.add(new Vector2(pathposition.get(i).getX(), pathposition.get(i).getY()));

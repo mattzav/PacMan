@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 
+import it.unical.ghostAI.Position;
 import it.unical.inputobject.PacmanDLV;
 import it.unical.inputobject.RaccoltaIstante;
 import it.unical.mat.embasp.base.Handler;
@@ -26,7 +27,6 @@ import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 import it.unical.object.Coin;
 import it.unical.object.Ghost;
 import it.unical.object.PacMan;
-import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 import com.badlogic.gdx.Screen;
@@ -84,7 +84,7 @@ public class GameScreen implements Screen {
 		parameterPoint.color = Color.LIGHT_GRAY;
 		fontPoint = generator1.generateFont(parameterPoint);
 
-		handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
+		handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2"));
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
 					// prendiamo il nome del programma adatto alla situazione attuale
 					encondingName = world.getOptimalProgram();
 
-					handler = new DesktopHandler(new DLV2DesktopService("dlv2"));
+					handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2"));
 
 					// costruiamo i fatti in base al programma da invocare
 					facts = world.getInputFacts(encondingName);
@@ -127,11 +127,11 @@ public class GameScreen implements Screen {
 					handler.addProgram(facts);
 
 					encoding = new ASPInputProgram();
-					encoding.addFilesPath(encondingPath + encondingName);
-					// encoding.addFilesPath(encondingPath + "utility.py");
-
+					
+					encoding.addFilesPath(encondingPath+encondingName);
+					
 					handler.addProgram(encoding);
-
+					
 					Output output = handler.startSync();
 					AnswerSets answerSets = (AnswerSets) output;
 					ArrayList<Position> steps = new ArrayList();
@@ -179,6 +179,7 @@ public class GameScreen implements Screen {
 								world.getPacman().getSteps().add(steps.get(i));
 						}
 
+						//ammesso che ci sia più di un answerset ottimo, dopo il primo usciamo dal ciclo
 						break;
 
 					}

@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 
+import it.unical.ghostAI.FindPath;
+import it.unical.ghostAI.Position;
 import it.unical.inputobject.Casella;
 import it.unical.inputobject.Moneta;
 import it.unical.inputobject.NemicoVicino;
@@ -17,11 +19,8 @@ import it.unical.inputobject.scappadalnemico.Nemico;
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.object.Coin;
-import it.unical.object.Collectable;
 import it.unical.object.Ghost;
 import it.unical.object.PacMan;
-import it.unical.provaIA.FindPath;
-import it.unical.provaIA.Position;
 import it.unical.utility.Constant;
 
 public class PacManWorld {
@@ -34,7 +33,7 @@ public class PacManWorld {
 	private int point;
 	private int life;
 
-	public PacManWorld(int level, int point,int life) {
+	public PacManWorld(int level, int point, int life) {
 
 		this.ghosts = new ArrayList<Ghost>();
 		this.point = point;
@@ -48,7 +47,7 @@ public class PacManWorld {
 		Random random = new Random();
 
 		for (int i = 0; i < level / 10; i++) {
-			this.ghosts.add(new Ghost(19, 17-i, random.nextInt(4), speed_ghost + level % 10));
+			this.ghosts.add(new Ghost(19, 17 - i, random.nextInt(4), speed_ghost + level % 10));
 		}
 		this.level = level;
 
@@ -298,10 +297,16 @@ public class PacManWorld {
 				if (pacman.isSpecial()) {
 					died.add(ghost);
 					point += 300;
-					Constant.ghost_died.play();
+					
+					if (SettingsScreen.musicEnabled)
+						Constant.ghost_died.play();
+				
 				} else {
 					pacman.setDied();
-					Constant.pacman_dead.play();
+					
+					if (SettingsScreen.musicEnabled)
+						Constant.pacman_dead.play();
+					
 					return true;
 				}
 			}
@@ -339,7 +344,7 @@ public class PacManWorld {
 			boolean found = false;
 			if (distance >= 7) {
 				for (Ghost ghost : ghosts) {
-					if (Constant.distanza(pacmanPosition,
+					if (Constant.distance(pacmanPosition,
 							new Position(ghost.getLogic_x(), ghost.getLogic_y())) <= distance)
 						found = true;
 				}
@@ -353,7 +358,7 @@ public class PacManWorld {
 		if (!pacman.isSpecial() || changePacman) {
 			int nearEnemies = 0;
 			for (Ghost ghost : ghosts) {
-				if (Constant.distanza(pacmanPosition, new Position(ghost.getLogic_x(), ghost.getLogic_y())) <= 7)
+				if (Constant.distance(pacmanPosition, new Position(ghost.getLogic_x(), ghost.getLogic_y())) <= 7)
 					nearEnemies++;
 			}
 			if (nearEnemies >= 1)
@@ -418,7 +423,7 @@ public class PacManWorld {
 					returnValue.addObjectInput(nearestEnemy);
 				}
 				returnValue.addObjectInput(new NumeroMosseMassimo(
-						Math.min(7, (int) pacman.getRemainingTimeSpecial() / ((25 * (level%10)) + 50))));
+						Math.min(7, (int) pacman.getRemainingTimeSpecial() / ((25 * (level % 10)) + 50))));
 
 			} else if (program.equals("scappaDalNemico")) {
 				returnValue.addObjectInput(new PacmanDLV(0, pacman.getLogic_x(), pacman.getLogic_y()));
@@ -459,12 +464,12 @@ public class PacManWorld {
 		orderedGhosts.add(ghosts.get(0));
 		for (int j = 1; j < ghosts.size(); j++) {
 			Ghost ghost = ghosts.get(j);
-			int currentDistance = Constant.distanza(pacmanPosition,
+			int currentDistance = Constant.distance(pacmanPosition,
 					new Position(ghost.getLogic_x(), ghost.getLogic_y()));
 			int index = orderedGhosts.size();
 			for (int i = 0; i < orderedGhosts.size(); i++) {
 				Ghost currentGhost = orderedGhosts.get(i);
-				if (Constant.distanza(pacmanPosition,
+				if (Constant.distance(pacmanPosition,
 						new Position(currentGhost.getLogic_x(), currentGhost.getLogic_y())) < currentDistance) {
 					index = i;
 					break;
@@ -488,7 +493,7 @@ public class PacManWorld {
 		int minDist = Integer.MAX_VALUE;
 		Coin nearestCoin = null;
 		for (Coin coin : coins) {
-			int dist = Constant.distanza(new Position(coin.getLogic_x(), coin.getLogic_y()),
+			int dist = Constant.distance(new Position(coin.getLogic_x(), coin.getLogic_y()),
 					new Position(pacman.getLogic_x(), pacman.getLogic_y()));
 			if (dist < minDist && coin.isSpecialCoin()) {
 				minDist = dist;
@@ -504,7 +509,7 @@ public class PacManWorld {
 		int minDist = Integer.MAX_VALUE;
 		Ghost nearestEnemy = null;
 		for (Ghost ghost : ghosts) {
-			int dist = Constant.distanza(new Position(ghost.getLogic_x(), ghost.getLogic_y()),
+			int dist = Constant.distance(new Position(ghost.getLogic_x(), ghost.getLogic_y()),
 					new Position(pacman.getLogic_x(), pacman.getLogic_y()));
 			if (dist < minDist) {
 				minDist = dist;
@@ -521,7 +526,7 @@ public class PacManWorld {
 		int minDist = Integer.MAX_VALUE;
 		Coin nearestCoin = null;
 		for (Coin coin : coins) {
-			int dist = Constant.distanza(new Position(coin.getLogic_x(), coin.getLogic_y()),
+			int dist = Constant.distance(new Position(coin.getLogic_x(), coin.getLogic_y()),
 					new Position(pacman.getLogic_x(), pacman.getLogic_y()));
 			if (dist < minDist && !coin.isSpecialCoin()) {
 				minDist = dist;
@@ -532,11 +537,11 @@ public class PacManWorld {
 			return null;
 		return new MonetaVicina(nearestCoin.getLogic_x(), nearestCoin.getLogic_y());
 	}
-	
+
 	public int getLife() {
 		return life;
 	}
-	
+
 	public void setLife(int life) {
 		this.life = life;
 	}

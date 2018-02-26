@@ -1,3 +1,4 @@
+%MODELLO INPUT
 %casella(X,Y). 			 --> una generica casella percorribile eventualmente
 %moneta(X,Y,Tipo).  	 --> una moneta con il tipo associato ("normale"/"speciale")
 %pacmanDLV(Tempo,X,Y).	 --> la posizione di pacman in un certo istante di tempo		

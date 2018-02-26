@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -59,15 +62,10 @@ public class ScoreScreen implements Screen {
 		this.game = game;
 		this.colour = 2;
 		this.animation = 0;
-		this.level=level;
+		this.level = level;
 		generator1 = new FreeTypeFontGenerator(Gdx.files.internal("font/arcade.ttf"));
 
 		batch = new SpriteBatch();
-
-		Table mainTable = new Table();
-		mainTable.setFillParent(true);
-		mainTable.bottom();
-		mainTable.setLayoutEnabled(false);
 
 		this.playerName = playerName;
 		this.playerScore = playerScore;
@@ -80,22 +78,24 @@ public class ScoreScreen implements Screen {
 		this.ghostDirection = new Vector2(1, 0);
 		this.ghostPosition = new Vector2(45, 495);
 
-		reader = new BufferedReader(new FileReader("assets/bestScore.txt"));
+		Preferences pref1 = Gdx.app.getPreferences("Player");
+		Preferences pref2 = Gdx.app.getPreferences("Score");
+		Preferences pref3 = Gdx.app.getPreferences("Level");
 
 		for (int i = 0; i < 10; i++) {
-			String line;
-			try {
-				line = reader.readLine();
-				players[i] = line.substring(0, line.indexOf(";"));
-				scores[i] = Integer.valueOf(line.substring(line.indexOf(";") + 1, line.indexOf(":")));
-				levels[i] = Integer.valueOf(line.substring(line.indexOf(":") + 1, line.length()));
-			} catch (IOException e) {
-				e.printStackTrace();
+			players[i] = null;
+			scores[i] = -1;
+			levels[i] = -1;
+		}
+
+		for (int i = 0; i < 10; i++) {
+			if (pref1.contains(String.valueOf(i))) {
+				players[i] = pref1.getString(String.valueOf(i));
+				scores[i] = Integer.valueOf(pref2.getString(String.valueOf(i)));
+				levels[i] = Integer.valueOf(pref3.getString(String.valueOf(i)));
 			}
 		}
-		reader.close();
-
-		writer = new PrintWriter(new FileWriter("assets/bestScore.txt"));
+		
 		int index = -1;
 		for (int i = 0; i < 10; i++) {
 			if (scores[i] > playerScore)
@@ -103,6 +103,7 @@ public class ScoreScreen implements Screen {
 			index = i;
 			break;
 		}
+
 		if (index != -1) {
 			for (int i = 9; i > index; i--) {
 				scores[i] = scores[i - 1];
@@ -116,9 +117,22 @@ public class ScoreScreen implements Screen {
 			players[index] = playerName;
 			levels[index] = level;
 		}
-		for (int i = 0; i < 10; i++)
-			writer.println(players[i] + ";" + scores[i]+":"+levels[i]);
-		writer.flush();
+
+		for (int i = 0; i < 10 && scores[i]!=-1; i++) {
+			if (pref1.contains(String.valueOf(i))) {
+				pref1.remove(String.valueOf(i));
+				pref2.remove(String.valueOf(i));
+				pref3.remove(String.valueOf(i));
+			}
+			pref1.putString(String.valueOf(i), players[i]);
+			pref2.putString(String.valueOf(i), String.valueOf(scores[i]));
+			pref3.putString(String.valueOf(i), String.valueOf(levels[i]));
+		}
+		
+		pref1.flush();
+		pref2.flush();
+		pref3.flush();
+
 
 		FreeTypeFontParameter parameter;
 		parameter = new FreeTypeFontParameter();
@@ -129,6 +143,24 @@ public class ScoreScreen implements Screen {
 		}
 		parameter.color = Color.WHITE;
 		font_position.put(Integer.valueOf(10), generator1.generateFont(parameter));
+
+		Table mainTable = new Table();
+		mainTable.setFillParent(true);
+		mainTable.bottom();
+		mainTable.setLayoutEnabled(false);
+
+		Button menu = new TextButton("Menu", Constant.skin);
+		menu.setColor(Color.RED);
+		menu.setPosition(440, 0);
+		menu.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.swap(Constant.MENUSTATE, null, 0, 0);
+			}
+		});
+		stage = new Stage();
+		stage.addActor(mainTable);
+		mainTable.add(menu);
 	}
 
 	@Override
@@ -146,26 +178,28 @@ public class ScoreScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.draw(getImage(), pacmanPosition.x, pacmanPosition.y);
 		batch.draw(getGhostImage(), ghostPosition.x, ghostPosition.y);
-		font_position.get(Integer.valueOf(10)).draw(batch, "TOP 10 PLAYERS", 175, 415);
+		font_position.get(Integer.valueOf(10)).draw(batch, "TOP 10 PLAYERS", 175, 425);
 		font_position.get(Integer.valueOf(10)).draw(batch, "HIGH SCORE " + scores[0], 145, 495);
-		font_position.get(Integer.valueOf(10)).draw(batch, "YOUR SCORE " + playerScore, 145, 465);
-		
-		font_position.get(Integer.valueOf(10)).draw(batch, "RANK", 45, 365);
-		font_position.get(Integer.valueOf(10)).draw(batch, "NAME", 160, 365);
-		font_position.get(Integer.valueOf(10)).draw(batch, "SCORE", 330, 365);
-		font_position.get(Integer.valueOf(10)).draw(batch, "LEVEL", 440, 365);
+		font_position.get(Integer.valueOf(10)).draw(batch, playerName + " YOUR SCORE IS " + playerScore, 120, 465);
 
-		
-		for (int i = 0; i < 10; i++) {
+		font_position.get(Integer.valueOf(10)).draw(batch, "RANK", 45, 385);
+		font_position.get(Integer.valueOf(10)).draw(batch, "NAME", 160, 385);
+		font_position.get(Integer.valueOf(10)).draw(batch, "SCORE", 330, 385);
+		font_position.get(Integer.valueOf(10)).draw(batch, "LEVEL", 440, 385);
+
+		for (int i = 0; i < 10 && scores[i] != -1; i++) {
 			BitmapFont font = font_position.get(Integer.valueOf(i));
-			font.draw(batch, String.valueOf(i + 1) + "ST", 45, 330 - 30 * i);
-			if (players[i].equals(playerName) && scores[i] == playerScore && level==levels[i])
-				font.draw(batch, "->", 20, 330 - 30 * i);
-			font.draw(batch, players[i], 140, 330 - 30 * i);
-			font.draw(batch, String.valueOf(scores[i]), 325, 330 - 30 * i);
-			font.draw(batch, String.valueOf(levels[i]), 460, 330 - 30 * i);
+			font.draw(batch, String.valueOf(i + 1) + "ST", 45, 350 - 30 * i);
+			if (players[i].equals(playerName) && scores[i] == playerScore && level == levels[i])
+				font.draw(batch, "->", 20, 350 - 30 * i);
+			font.draw(batch, players[i], 140, 350 - 30 * i);
+			font.draw(batch, String.valueOf(scores[i]), 325, 350 - 30 * i);
+			font.draw(batch, String.valueOf(levels[i]), 460, 350 - 30 * i);
 		}
 		batch.end();
+
+		stage.act();
+		stage.draw();
 	}
 
 	private Texture getGhostImage() {

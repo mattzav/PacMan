@@ -34,7 +34,7 @@ public class StartScreen implements Screen{
 		
 		Button start= new TextButton("Start", Constant.skin);
 		start.setColor(Color.RED);
-		start.setPosition(210, 205);
+		start.setPosition(210, 185);
 		start.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
@@ -45,23 +45,18 @@ public class StartScreen implements Screen{
 		
 		TextButton settings= new TextButton("Settings", Constant.skin);
 		settings.setColor(Color.RED);
-		settings.setPosition(190, 105);
+		settings.setPosition(190, 75);
 		settings.addListener(new ChangeListener() {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
-	          
+	        	game.swap(Constant.INFOSTATE, null,0, 0);
 	        }
 	    });
-		
-		TextButton info= new TextButton( "Info", Constant.skin);
-		info.setColor(Color.RED);
-		info.setPosition(210, 5);
 		
 		stage = new Stage();
 		stage.addActor(mainTable);
 		mainTable.add(start);
 		mainTable.add(settings);
-		mainTable.add(info);
 	}
 
 	@Override
